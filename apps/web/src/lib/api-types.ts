@@ -217,7 +217,8 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    get?: never;
+    /** List Hunts */
+    get: operations['list_hunts_api_v1_hunts_get'];
     put?: never;
     /** Start Hunt */
     post: operations['start_hunt_api_v1_hunts_post'];
@@ -760,6 +761,64 @@ export interface components {
        */
       duration_minutes: 10 | 20 | 30;
     };
+    /** HuntSummary */
+    HuntSummary: {
+      /** Id */
+      id: string;
+      /** State */
+      state: string;
+      /** Mode */
+      mode: string;
+      /**
+       * Started At
+       * Format: date-time
+       */
+      started_at: string;
+      /**
+       * Deadline At
+       * Format: date-time
+       */
+      deadline_at: string;
+      /** Ended At */
+      ended_at?: string | null;
+      /** Duration Minutes */
+      duration_minutes: number;
+      /** Pending */
+      pending: boolean;
+      /** Estimated In App Focus Seconds */
+      estimated_in_app_focus_seconds: number;
+      /** Focus Xp Awarded */
+      focus_xp_awarded: number;
+      /** Focus Reward Processed */
+      focus_reward_processed: boolean;
+      /** Discoveries */
+      discoveries: components['schemas']['Discovery'][];
+      /** Xp Awarded */
+      xp_awarded: number;
+    };
+    /** HuntView */
+    HuntView: {
+      /** Id */
+      id: string;
+      /** State */
+      state: string;
+      /** Mode */
+      mode: string;
+      /**
+       * Started At
+       * Format: date-time
+       */
+      started_at: string;
+      /**
+       * Deadline At
+       * Format: date-time
+       */
+      deadline_at: string;
+      /** Ended At */
+      ended_at?: string | null;
+      /** Duration Minutes */
+      duration_minutes: number;
+    };
     /** LoginInput */
     LoginInput: {
       /**
@@ -1290,6 +1349,26 @@ export interface operations {
       };
     };
   };
+  list_hunts_api_v1_hunts_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HuntView'][];
+        };
+      };
+    };
+  };
   start_hunt_api_v1_hunts_post: {
     parameters: {
       query?: never;
@@ -1309,7 +1388,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          'application/json': unknown;
+          'application/json': components['schemas']['HuntView'];
         };
       };
       /** @description Validation Error */
@@ -1340,7 +1419,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          'application/json': unknown;
+          'application/json': components['schemas']['HuntView'];
         };
       };
       /** @description Validation Error */
@@ -1406,7 +1485,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          'application/json': unknown;
+          'application/json': components['schemas']['HuntView'];
         };
       };
       /** @description Validation Error */
@@ -1437,7 +1516,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          'application/json': unknown;
+          'application/json': components['schemas']['HuntSummary'];
         };
       };
       /** @description Validation Error */

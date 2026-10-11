@@ -61,7 +61,11 @@ export function ErrorNote({ message }: { message?: string }) {
 
 export function DiscoveryCard({ item }: { item: Discovery }) {
   return (
-    <article className='surface overflow-hidden'>
+    <Link
+      href={`/discoveries/${item.id}`}
+      aria-label={`Open discovery: ${item.common_name ?? 'Finding out'}`}
+      className='surface group block overflow-hidden transition-transform hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
+    >
       {item.image_url ? (
         <div className='aspect-[4/3] overflow-hidden bg-surface-alt'>
           <img
@@ -72,7 +76,7 @@ export function DiscoveryCard({ item }: { item: Discovery }) {
                 : 'Submitted nature photograph'
             }
             loading='lazy'
-            className='h-full w-full object-cover'
+            className='h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]'
           />
         </div>
       ) : null}
@@ -93,7 +97,8 @@ export function DiscoveryCard({ item }: { item: Discovery }) {
         {item.xp_awarded > 0 ? (
           <p className='mt-3 text-sm font-semibold text-accent'>+{item.xp_awarded} XP</p>
         ) : null}
+        <p className='mt-4 text-sm font-semibold text-accent'>Open discovery →</p>
       </div>
-    </article>
+    </Link>
   );
 }

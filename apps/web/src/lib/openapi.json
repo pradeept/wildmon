@@ -7,7 +7,9 @@
   "paths": {
     "/api/v1/health": {
       "get": {
-        "tags": ["system"],
+        "tags": [
+          "system"
+        ],
         "summary": "Health",
         "operationId": "health_api_v1_health_get",
         "responses": {
@@ -24,7 +26,9 @@
     },
     "/api/v1/auth/register": {
       "post": {
-        "tags": ["auth"],
+        "tags": [
+          "auth"
+        ],
         "summary": "Register",
         "operationId": "register_api_v1_auth_register_post",
         "requestBody": {
@@ -63,7 +67,9 @@
     },
     "/api/v1/auth/login": {
       "post": {
-        "tags": ["auth"],
+        "tags": [
+          "auth"
+        ],
         "summary": "Login",
         "operationId": "login_api_v1_auth_login_post",
         "requestBody": {
@@ -102,7 +108,9 @@
     },
     "/api/v1/auth/logout": {
       "post": {
-        "tags": ["auth"],
+        "tags": [
+          "auth"
+        ],
         "summary": "Logout",
         "operationId": "logout_api_v1_auth_logout_post",
         "responses": {
@@ -119,7 +127,9 @@
     },
     "/api/v1/me": {
       "get": {
-        "tags": ["auth"],
+        "tags": [
+          "auth"
+        ],
         "summary": "Me",
         "operationId": "me_api_v1_me_get",
         "responses": {
@@ -136,7 +146,9 @@
         }
       },
       "patch": {
-        "tags": ["auth"],
+        "tags": [
+          "auth"
+        ],
         "summary": "Update Me",
         "operationId": "update_me_api_v1_me_patch",
         "requestBody": {
@@ -175,7 +187,9 @@
     },
     "/api/v1/users/{username}": {
       "get": {
-        "tags": ["auth"],
+        "tags": [
+          "auth"
+        ],
         "summary": "Profile",
         "operationId": "profile_api_v1_users__username__get",
         "parameters": [
@@ -215,7 +229,9 @@
     },
     "/api/v1/uploads/sign": {
       "post": {
-        "tags": ["discoveries"],
+        "tags": [
+          "discoveries"
+        ],
         "summary": "Sign Upload",
         "operationId": "sign_upload_api_v1_uploads_sign_post",
         "requestBody": {
@@ -254,7 +270,9 @@
     },
     "/api/v1/uploads/{key}": {
       "put": {
-        "tags": ["discoveries"],
+        "tags": [
+          "discoveries"
+        ],
         "summary": "Upload Local",
         "operationId": "upload_local_api_v1_uploads__key__put",
         "parameters": [
@@ -292,7 +310,9 @@
     },
     "/api/v1/discoveries": {
       "post": {
-        "tags": ["discoveries"],
+        "tags": [
+          "discoveries"
+        ],
         "summary": "Create Discovery",
         "operationId": "create_discovery_api_v1_discoveries_post",
         "requestBody": {
@@ -329,7 +349,9 @@
         }
       },
       "get": {
-        "tags": ["discoveries"],
+        "tags": [
+          "discoveries"
+        ],
         "summary": "List Discoveries",
         "operationId": "list_discoveries_api_v1_discoveries_get",
         "parameters": [
@@ -374,7 +396,9 @@
     },
     "/api/v1/collection": {
       "get": {
-        "tags": ["discoveries"],
+        "tags": [
+          "discoveries"
+        ],
         "summary": "Collection",
         "operationId": "collection_api_v1_collection_get",
         "responses": {
@@ -397,7 +421,9 @@
     },
     "/api/v1/discoveries/{discovery_id}": {
       "get": {
-        "tags": ["discoveries"],
+        "tags": [
+          "discoveries"
+        ],
         "summary": "Get Discovery",
         "operationId": "get_discovery_api_v1_discoveries__discovery_id__get",
         "parameters": [
@@ -437,7 +463,9 @@
     },
     "/api/v1/discoveries/{discovery_id}/image": {
       "get": {
-        "tags": ["discoveries"],
+        "tags": [
+          "discoveries"
+        ],
         "summary": "Get Image",
         "operationId": "get_image_api_v1_discoveries__discovery_id__image_get",
         "parameters": [
@@ -474,8 +502,33 @@
       }
     },
     "/api/v1/hunts": {
+      "get": {
+        "tags": [
+          "hunts"
+        ],
+        "summary": "List Hunts",
+        "operationId": "list_hunts_api_v1_hunts_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/HuntView"
+                  },
+                  "type": "array",
+                  "title": "Response List Hunts Api V1 Hunts Get"
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
-        "tags": ["hunts"],
+        "tags": [
+          "hunts"
+        ],
         "summary": "Start Hunt",
         "operationId": "start_hunt_api_v1_hunts_post",
         "requestBody": {
@@ -493,7 +546,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/HuntView"
+                }
               }
             }
           },
@@ -512,7 +567,9 @@
     },
     "/api/v1/hunts/{hunt_id}": {
       "get": {
-        "tags": ["hunts"],
+        "tags": [
+          "hunts"
+        ],
         "summary": "Get Hunt",
         "operationId": "get_hunt_api_v1_hunts__hunt_id__get",
         "parameters": [
@@ -531,7 +588,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/HuntView"
+                }
               }
             }
           },
@@ -550,7 +609,9 @@
     },
     "/api/v1/hunts/{hunt_id}/visibility": {
       "post": {
-        "tags": ["hunts"],
+        "tags": [
+          "hunts"
+        ],
         "summary": "Visibility",
         "operationId": "visibility_api_v1_hunts__hunt_id__visibility_post",
         "parameters": [
@@ -598,7 +659,9 @@
     },
     "/api/v1/hunts/{hunt_id}/finish": {
       "post": {
-        "tags": ["hunts"],
+        "tags": [
+          "hunts"
+        ],
         "summary": "Finish Hunt",
         "operationId": "finish_hunt_api_v1_hunts__hunt_id__finish_post",
         "parameters": [
@@ -617,7 +680,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/HuntView"
+                }
               }
             }
           },
@@ -636,7 +701,9 @@
     },
     "/api/v1/hunts/{hunt_id}/summary": {
       "get": {
-        "tags": ["hunts"],
+        "tags": [
+          "hunts"
+        ],
         "summary": "Summary",
         "operationId": "summary_api_v1_hunts__hunt_id__summary_get",
         "parameters": [
@@ -655,7 +722,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/HuntSummary"
+                }
               }
             }
           },
@@ -674,7 +743,9 @@
     },
     "/api/v1/friends": {
       "get": {
-        "tags": ["friends"],
+        "tags": [
+          "friends"
+        ],
         "summary": "List Friends",
         "operationId": "list_friends_api_v1_friends_get",
         "responses": {
@@ -691,7 +762,9 @@
     },
     "/api/v1/friends/requests": {
       "post": {
-        "tags": ["friends"],
+        "tags": [
+          "friends"
+        ],
         "summary": "Request Friend",
         "operationId": "request_friend_api_v1_friends_requests_post",
         "requestBody": {
@@ -728,7 +801,9 @@
     },
     "/api/v1/friends/requests/{request_id}/accept": {
       "post": {
-        "tags": ["friends"],
+        "tags": [
+          "friends"
+        ],
         "summary": "Accept Request",
         "operationId": "accept_request_api_v1_friends_requests__request_id__accept_post",
         "parameters": [
@@ -766,7 +841,9 @@
     },
     "/api/v1/friends/requests/{request_id}/reject": {
       "post": {
-        "tags": ["friends"],
+        "tags": [
+          "friends"
+        ],
         "summary": "Reject Request",
         "operationId": "reject_request_api_v1_friends_requests__request_id__reject_post",
         "parameters": [
@@ -804,7 +881,9 @@
     },
     "/api/v1/challenges": {
       "get": {
-        "tags": ["challenges"],
+        "tags": [
+          "challenges"
+        ],
         "summary": "List Challenges",
         "operationId": "list_challenges_api_v1_challenges_get",
         "responses": {
@@ -819,7 +898,9 @@
         }
       },
       "post": {
-        "tags": ["challenges"],
+        "tags": [
+          "challenges"
+        ],
         "summary": "Create Challenge",
         "operationId": "create_challenge_api_v1_challenges_post",
         "requestBody": {
@@ -856,7 +937,9 @@
     },
     "/api/v1/challenges/{challenge_id}": {
       "get": {
-        "tags": ["challenges"],
+        "tags": [
+          "challenges"
+        ],
         "summary": "Get Challenge",
         "operationId": "get_challenge_api_v1_challenges__challenge_id__get",
         "parameters": [
@@ -894,7 +977,9 @@
     },
     "/api/v1/challenges/{challenge_id}/accept": {
       "post": {
-        "tags": ["challenges"],
+        "tags": [
+          "challenges"
+        ],
         "summary": "Accept",
         "operationId": "accept_api_v1_challenges__challenge_id__accept_post",
         "parameters": [
@@ -932,7 +1017,9 @@
     },
     "/api/v1/challenges/{challenge_id}/decline": {
       "post": {
-        "tags": ["challenges"],
+        "tags": [
+          "challenges"
+        ],
         "summary": "Decline",
         "operationId": "decline_api_v1_challenges__challenge_id__decline_post",
         "parameters": [
@@ -970,7 +1057,9 @@
     },
     "/api/v1/challenges/{challenge_id}/ready": {
       "post": {
-        "tags": ["challenges"],
+        "tags": [
+          "challenges"
+        ],
         "summary": "Ready",
         "operationId": "ready_api_v1_challenges__challenge_id__ready_post",
         "parameters": [
@@ -1008,7 +1097,9 @@
     },
     "/api/v1/challenges/{challenge_id}/captures": {
       "post": {
-        "tags": ["challenges"],
+        "tags": [
+          "challenges"
+        ],
         "summary": "Register Capture",
         "operationId": "register_capture_api_v1_challenges__challenge_id__captures_post",
         "parameters": [
@@ -1056,7 +1147,9 @@
     },
     "/api/v1/challenges/{challenge_id}/done": {
       "post": {
-        "tags": ["challenges"],
+        "tags": [
+          "challenges"
+        ],
         "summary": "Done",
         "operationId": "done_api_v1_challenges__challenge_id__done_post",
         "parameters": [
@@ -1094,7 +1187,9 @@
     },
     "/api/v1/challenges/{challenge_id}/results": {
       "get": {
-        "tags": ["challenges"],
+        "tags": [
+          "challenges"
+        ],
         "summary": "Results",
         "operationId": "results_api_v1_challenges__challenge_id__results_get",
         "parameters": [
@@ -1132,7 +1227,9 @@
     },
     "/api/v1/ecosystems": {
       "get": {
-        "tags": ["ecosystems"],
+        "tags": [
+          "ecosystems"
+        ],
         "summary": "List Packs",
         "operationId": "list_packs_api_v1_ecosystems_get",
         "responses": {
@@ -1149,7 +1246,9 @@
     },
     "/api/v1/ecosystems/{slug}": {
       "get": {
-        "tags": ["ecosystems"],
+        "tags": [
+          "ecosystems"
+        ],
         "summary": "Get Pack",
         "operationId": "get_pack_api_v1_ecosystems__slug__get",
         "parameters": [
@@ -1187,7 +1286,9 @@
     },
     "/api/v1/ecosystems/{slug}/join": {
       "post": {
-        "tags": ["ecosystems"],
+        "tags": [
+          "ecosystems"
+        ],
         "summary": "Join Pack",
         "operationId": "join_pack_api_v1_ecosystems__slug__join_post",
         "parameters": [
@@ -1225,7 +1326,9 @@
     },
     "/api/v1/ecosystems/{slug}/progress": {
       "get": {
-        "tags": ["ecosystems"],
+        "tags": [
+          "ecosystems"
+        ],
         "summary": "Pack Progress",
         "operationId": "pack_progress_api_v1_ecosystems__slug__progress_get",
         "parameters": [
@@ -1263,7 +1366,9 @@
     },
     "/api/v1/leaderboards": {
       "get": {
-        "tags": ["leaderboards"],
+        "tags": [
+          "leaderboards"
+        ],
         "summary": "Leaderboard",
         "operationId": "leaderboard_api_v1_leaderboards_get",
         "parameters": [
@@ -1272,7 +1377,10 @@
             "in": "query",
             "required": false,
             "schema": {
-              "enum": ["friends", "global"],
+              "enum": [
+                "friends",
+                "global"
+              ],
               "type": "string",
               "default": "global",
               "title": "Scope"
@@ -1283,7 +1391,10 @@
             "in": "query",
             "required": false,
             "schema": {
-              "enum": ["weekly", "all-time"],
+              "enum": [
+                "weekly",
+                "all-time"
+              ],
               "type": "string",
               "default": "weekly",
               "title": "Period"
@@ -1324,7 +1435,9 @@
     },
     "/api/v1/badges": {
       "get": {
-        "tags": ["badges"],
+        "tags": [
+          "badges"
+        ],
         "summary": "Badges",
         "operationId": "badges_api_v1_badges_get",
         "responses": {
@@ -1341,7 +1454,9 @@
     },
     "/api/v1/me/badges": {
       "get": {
-        "tags": ["badges"],
+        "tags": [
+          "badges"
+        ],
         "summary": "My Badges",
         "operationId": "my_badges_api_v1_me_badges_get",
         "responses": {
@@ -1358,7 +1473,9 @@
     },
     "/api/v1/species": {
       "get": {
-        "tags": ["catalog"],
+        "tags": [
+          "catalog"
+        ],
         "summary": "Supported Species",
         "operationId": "supported_species_api_v1_species_get",
         "responses": {
@@ -1386,7 +1503,9 @@
           }
         },
         "type": "object",
-        "required": ["client_capture_id"],
+        "required": [
+          "client_capture_id"
+        ],
         "title": "CaptureRegistration"
       },
       "CategoryRequirement": {
@@ -1403,7 +1522,14 @@
           },
           "category": {
             "type": "string",
-            "enum": ["plant", "bird", "insect", "butterfly", "flowering_plant", "tree"],
+            "enum": [
+              "plant",
+              "bird",
+              "insect",
+              "butterfly",
+              "flowering_plant",
+              "tree"
+            ],
             "title": "Category"
           },
           "distinct_species": {
@@ -1421,7 +1547,11 @@
           }
         },
         "type": "object",
-        "required": ["id", "kind", "category"],
+        "required": [
+          "id",
+          "kind",
+          "category"
+        ],
         "title": "CategoryRequirement"
       },
       "ChallengeInput": {
@@ -1432,7 +1562,11 @@
           },
           "duration_minutes": {
             "type": "integer",
-            "enum": [15, 20, 30],
+            "enum": [
+              15,
+              20,
+              30
+            ],
             "title": "Duration Minutes",
             "default": 20
           },
@@ -1465,7 +1599,10 @@
           }
         },
         "type": "object",
-        "required": ["friend_id", "requirements"],
+        "required": [
+          "friend_id",
+          "requirements"
+        ],
         "title": "ChallengeInput"
       },
       "Discovery": {
@@ -1578,7 +1715,11 @@
           }
         },
         "type": "object",
-        "required": ["id", "status", "created_at"],
+        "required": [
+          "id",
+          "status",
+          "created_at"
+        ],
         "title": "Discovery"
       },
       "DiscoveryInput": {
@@ -1617,14 +1758,21 @@
           }
         },
         "type": "object",
-        "required": ["image_key", "client_capture_id"],
+        "required": [
+          "image_key",
+          "client_capture_id"
+        ],
         "title": "DiscoveryInput"
       },
       "FocusSignal": {
         "properties": {
           "kind": {
             "type": "string",
-            "enum": ["hidden", "visible", "pagehide"],
+            "enum": [
+              "hidden",
+              "visible",
+              "pagehide"
+            ],
             "title": "Kind"
           },
           "client_at": {
@@ -1641,7 +1789,9 @@
           }
         },
         "type": "object",
-        "required": ["kind"],
+        "required": [
+          "kind"
+        ],
         "title": "FocusSignal"
       },
       "FriendRequestInput": {
@@ -1652,7 +1802,9 @@
           }
         },
         "type": "object",
-        "required": ["username"],
+        "required": [
+          "username"
+        ],
         "title": "FriendRequestInput"
       },
       "HTTPValidationError": {
@@ -1672,13 +1824,154 @@
         "properties": {
           "duration_minutes": {
             "type": "integer",
-            "enum": [10, 20, 30],
+            "enum": [
+              10,
+              20,
+              30
+            ],
             "title": "Duration Minutes",
             "default": 20
           }
         },
         "type": "object",
         "title": "HuntInput"
+      },
+      "HuntSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "state": {
+            "type": "string",
+            "title": "State"
+          },
+          "mode": {
+            "type": "string",
+            "title": "Mode"
+          },
+          "started_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Started At"
+          },
+          "deadline_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Deadline At"
+          },
+          "ended_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ended At"
+          },
+          "duration_minutes": {
+            "type": "integer",
+            "title": "Duration Minutes"
+          },
+          "pending": {
+            "type": "boolean",
+            "title": "Pending"
+          },
+          "estimated_in_app_focus_seconds": {
+            "type": "integer",
+            "title": "Estimated In App Focus Seconds"
+          },
+          "focus_xp_awarded": {
+            "type": "integer",
+            "title": "Focus Xp Awarded"
+          },
+          "focus_reward_processed": {
+            "type": "boolean",
+            "title": "Focus Reward Processed"
+          },
+          "discoveries": {
+            "items": {
+              "$ref": "#/components/schemas/Discovery"
+            },
+            "type": "array",
+            "title": "Discoveries"
+          },
+          "xp_awarded": {
+            "type": "integer",
+            "title": "Xp Awarded"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "state",
+          "mode",
+          "started_at",
+          "deadline_at",
+          "duration_minutes",
+          "pending",
+          "estimated_in_app_focus_seconds",
+          "focus_xp_awarded",
+          "focus_reward_processed",
+          "discoveries",
+          "xp_awarded"
+        ],
+        "title": "HuntSummary"
+      },
+      "HuntView": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "state": {
+            "type": "string",
+            "title": "State"
+          },
+          "mode": {
+            "type": "string",
+            "title": "Mode"
+          },
+          "started_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Started At"
+          },
+          "deadline_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Deadline At"
+          },
+          "ended_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ended At"
+          },
+          "duration_minutes": {
+            "type": "integer",
+            "title": "Duration Minutes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "state",
+          "mode",
+          "started_at",
+          "deadline_at",
+          "duration_minutes"
+        ],
+        "title": "HuntView"
       },
       "LoginInput": {
         "properties": {
@@ -1693,7 +1986,10 @@
           }
         },
         "type": "object",
-        "required": ["email", "password"],
+        "required": [
+          "email",
+          "password"
+        ],
         "title": "LoginInput"
       },
       "Profile": {
@@ -1718,7 +2014,10 @@
           }
         },
         "type": "object",
-        "required": ["id", "username"],
+        "required": [
+          "id",
+          "username"
+        ],
         "title": "Profile"
       },
       "ProfileUpdate": {
@@ -1758,7 +2057,11 @@
           }
         },
         "type": "object",
-        "required": ["username", "email", "password"],
+        "required": [
+          "username",
+          "email",
+          "password"
+        ],
         "title": "RegisterInput"
       },
       "SpeciesRequirement": {
@@ -1785,7 +2088,11 @@
           }
         },
         "type": "object",
-        "required": ["id", "kind", "species_id"],
+        "required": [
+          "id",
+          "kind",
+          "species_id"
+        ],
         "title": "SpeciesRequirement"
       },
       "TraitRequirement": {
@@ -1802,7 +2109,12 @@
           },
           "trait_code": {
             "type": "string",
-            "enum": ["serrated_leaf", "yellow_flower", "five_petals", "striped_wing"],
+            "enum": [
+              "serrated_leaf",
+              "yellow_flower",
+              "five_petals",
+              "striped_wing"
+            ],
             "title": "Trait Code"
           },
           "count": {
@@ -1819,19 +2131,29 @@
           }
         },
         "type": "object",
-        "required": ["id", "kind", "trait_code"],
+        "required": [
+          "id",
+          "kind",
+          "trait_code"
+        ],
         "title": "TraitRequirement"
       },
       "UploadSignInput": {
         "properties": {
           "content_type": {
             "type": "string",
-            "enum": ["image/jpeg", "image/png", "image/webp"],
+            "enum": [
+              "image/jpeg",
+              "image/png",
+              "image/webp"
+            ],
             "title": "Content Type"
           }
         },
         "type": "object",
-        "required": ["content_type"],
+        "required": [
+          "content_type"
+        ],
         "title": "UploadSignInput"
       },
       "UploadSignOutput": {
@@ -1852,7 +2174,10 @@
           }
         },
         "type": "object",
-        "required": ["key", "upload_url"],
+        "required": [
+          "key",
+          "upload_url"
+        ],
         "title": "UploadSignOutput"
       },
       "ValidationError": {
@@ -1888,7 +2213,11 @@
           }
         },
         "type": "object",
-        "required": ["loc", "msg", "type"],
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
         "title": "ValidationError"
       }
     }

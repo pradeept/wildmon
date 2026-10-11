@@ -1,6 +1,6 @@
 import asyncio
 
-from pymongo import ASCENDING, AsyncMongoClient
+from pymongo import ASCENDING, DESCENDING, AsyncMongoClient
 
 from app.core.config import get_settings
 
@@ -117,6 +117,7 @@ async def main() -> None:
                 "image_hash": {"$type": "string"},
             }
         await collection.create_index(fields, **kwargs)
+    await db.hunt_sessions.create_index([("user_id", ASCENDING), ("started_at", DESCENDING)])
     await db.processing_jobs.create_index([("state", 1), ("available_at", 1), ("lease_until", 1)])
     await db.friendships.create_index([("user_ids", 1), ("status", 1)])
     await db.upload_intents.create_index([("expires_at", 1)], expireAfterSeconds=0)

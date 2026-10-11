@@ -1,9 +1,11 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useState } from 'react';
-import { Clock, Footprints, Sparkle } from '@phosphor-icons/react';
-import { post } from '@/lib/api';
+import { ArrowUpRight, Clock, Footprints, Sparkle } from '@phosphor-icons/react';
+import useSWR from 'swr';
+import { api, post } from '@/lib/api';
 import type { Hunt } from '@/lib/types';
 import { ErrorNote, PageHeader } from '@/components/ui';
 
@@ -12,6 +14,7 @@ export default function Hunts() {
   const [duration, setDuration] = useState<10 | 20 | 30>(20);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const { data: hunts, error: historyError } = useSWR<Hunt[]>('/hunts', api);
   async function start() {
     setBusy(true);
     setError('');
@@ -87,6 +90,41 @@ export default function Hunts() {
           </div>
         </div>
       </div>
+      <section className='mt-10'>
+        <h2 className='text-xl font-semibold tracking-tight'>Your hunts</h2>
+        <p className='mt-1 text-sm text-muted'>Pick up an active walk or revisit what you found.</p>
+        {historyError ? (
+          <p className='mt-4 text-sm text-muted'>Your hunt history could not load right now.</p>
+        ) : hunts?.length ? (
+          <div className='mt-5 grid gap-3 sm:grid-cols-2'>
+            {hunts.map((hunt) => {
+              const active = hunt.state === 'active' && new Date(hunt.deadline_at) > new Date();
+              return (
+                <Link
+                  key={hunt.id}
+                  href={active ? `/hunts/${hunt.id}` : `/hunts/${hunt.id}/summary`}
+                  className='surface group flex items-center justify-between gap-4 p-5 transition-colors hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
+                >
+                  <div>
+                    <span className='text-xs font-semibold uppercase tracking-wide text-accent'>
+                      {active ? 'In progress' : 'Hunt summary'}
+                    </span>
+                    <p className='mt-1 font-semibold'>{hunt.duration_minutes}-minute nature walk</p>
+                    <p className='mt-1 text-sm text-muted'>
+                      {new Date(hunt.started_at).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <ArrowUpRight size={20} className='shrink-0 text-accent' />
+                </Link>
+              );
+            })}
+          </div>
+        ) : hunts ? (
+          <p className='mt-4 text-sm text-muted'>Your first hunt will appear here.</p>
+        ) : (
+          <p className='mt-4 text-sm text-muted'>Loading hunts…</p>
+        )}
+      </section>
     </>
   );
 }

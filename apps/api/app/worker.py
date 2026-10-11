@@ -9,6 +9,7 @@ from pymongo import AsyncMongoClient, ReturnDocument
 from pymongo.asynchronous.database import AsyncDatabase
 from pymongo.errors import DuplicateKeyError
 
+from app.ai.image_prep import prepare_model_image
 from app.ai.vision import GemmaVisionIdentifier
 from app.api.challenges import ensure_hunts
 from app.core.config import get_settings
@@ -109,7 +110,15 @@ async def process_identification(db: AsyncDatabase[dict[str, Any]], discovery_id
             return
     catalog = await db.species.find({"supported": True}).to_list(None)
     identifier = GemmaVisionIdentifier(settings)
-    finding = await identifier.identify(image, mime, catalog)
+    model_image, model_mime = await asyncio.to_thread(prepare_model_image, image, mime)
+    if len(model_image) < len(image):
+        logger.info(
+            "Reduced inference image from %d to %d bytes for discovery %s",
+            len(image),
+            len(model_image),
+            discovery_id,
+        )
+    finding = await identifier.identify(model_image, model_mime, catalog)
     result = finding.model_dump()
     scientific = (finding.scientific_name or "").strip().lower()
     species = next(
@@ -151,7 +160,7 @@ async def process_identification(db: AsyncDatabase[dict[str, Any]], discovery_id
                 if requirement["kind"] == "visual_trait"
             }
         )
-        traits = await identifier.validate_traits(image, mime, desired)
+        traits = await identifier.validate_traits(model_image, model_mime, desired)
     categories = [category] if category else []
     if category == "butterfly":
         categories.append("insect")

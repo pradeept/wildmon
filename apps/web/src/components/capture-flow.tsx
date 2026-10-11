@@ -7,37 +7,11 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { Camera, ImageSquare, X } from '@phosphor-icons/react';
 import { api, post } from '@/lib/api';
 import { createClientId } from '@/lib/client-id';
+import { prepareImage } from '@/lib/prepare-image';
 import type { Discovery } from '@/lib/types';
 import { DiscoveryCard, ErrorNote, PageHeader } from '@/components/ui';
 
 type UploadSign = { key: string; upload_url: string; method: 'PUT' };
-
-async function prepareImage(file: File): Promise<File> {
-  const image = new Image();
-  const url = URL.createObjectURL(file);
-  try {
-    await new Promise<void>((resolve, reject) => {
-      image.onload = () => resolve();
-      image.onerror = () => reject(new Error('Could not read this photo.'));
-      image.src = url;
-    });
-    const scale = Math.min(1, 1600 / Math.max(image.width, image.height));
-    const canvas = document.createElement('canvas');
-    canvas.width = Math.round(image.width * scale);
-    canvas.height = Math.round(image.height * scale);
-    canvas.getContext('2d')?.drawImage(image, 0, 0, canvas.width, canvas.height);
-    const blob = await new Promise<Blob>((resolve, reject) =>
-      canvas.toBlob(
-        (value) => (value ? resolve(value) : reject(new Error('Could not prepare photo.'))),
-        'image/jpeg',
-        0.84,
-      ),
-    );
-    return new File([blob], 'wildmon-capture.jpg', { type: 'image/jpeg' });
-  } finally {
-    URL.revokeObjectURL(url);
-  }
-}
 
 export function CaptureFlow() {
   const params = useSearchParams();
@@ -185,6 +159,11 @@ export function CaptureFlow() {
                 ? 'Identification is running. You can put your phone away and return later.'
                 : 'Your result is ready.'}
             </p>
+            {sessionId ? (
+              <Link href={`/hunts/${sessionId}`} className='button-secondary'>
+                Return to hunt
+              </Link>
+            ) : null}
             <button className='button' onClick={() => setResult(null)}>
               Capture another
             </button>

@@ -96,12 +96,20 @@ export default function HuntPage() {
           </p>
         </div>
         <div className='mt-5 grid gap-3'>
-          <Link href={`/capture?session=${id}`} className='button w-full py-4'>
-            <Camera size={20} /> Capture discovery
-          </Link>
-          <button onClick={finish} className='button-secondary w-full'>
-            Finish hunt
-          </button>
+          {hunt?.state === 'active' ? (
+            <>
+              <Link href={`/capture?session=${id}`} className='button w-full py-4'>
+                <Camera size={20} /> Capture discovery
+              </Link>
+              <button onClick={finish} className='button-secondary w-full'>
+                Finish hunt
+              </button>
+            </>
+          ) : hunt ? (
+            <Link href={`/hunts/${id}/summary`} className='button w-full'>
+              View summary
+            </Link>
+          ) : null}
           <ErrorNote message={error} />
         </div>
       </div>

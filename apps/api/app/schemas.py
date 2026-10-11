@@ -62,6 +62,25 @@ class HuntInput(BaseModel):
     duration_minutes: Literal[10, 20, 30] = 20
 
 
+class HuntView(BaseModel):
+    id: str
+    state: str
+    mode: str
+    started_at: datetime
+    deadline_at: datetime
+    ended_at: datetime | None = None
+    duration_minutes: int
+
+
+class HuntSummary(HuntView):
+    pending: bool
+    estimated_in_app_focus_seconds: int
+    focus_xp_awarded: int
+    focus_reward_processed: bool
+    discoveries: list[Discovery]
+    xp_awarded: int
+
+
 class FocusSignal(BaseModel):
     kind: Literal["hidden", "visible", "pagehide"]
     client_at: datetime | None = None
