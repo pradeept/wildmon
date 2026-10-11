@@ -52,7 +52,7 @@ Treat this file as the product source of truth. Implement working vertical slice
 Public: `/`, `/login`, `/register`, `/leaderboard`, `/u/[username]` (public profile only).  
 Authenticated: `/dashboard`, `/capture`, `/hunts`, `/hunts/[id]`, `/hunts/[id]/summary`, `/collection`, `/friends`, `/challenges`, `/challenges/new`, `/challenges/[id]`, `/challenges/[id]/results`, `/ecosystems`, `/ecosystems/[slug]`, `/badges`, `/settings`.
 
-On mobile, bottom nav: Explore, Collection, Challenges, Leaderboards, Profile. Keep capture button prominent. Capturing an image must require minimum taps. Use HTTPS and `getUserMedia` where available; fall back to `<input type=file accept=image/* capture=environment>` and explain permission failures. Do not promise camera works offline in every browser. Use IndexedDB offline queue when available, and upload status indicators. Limit compressed image size; keep the original image securely if required for verification.
+Desktop sidebar: Explore, Ecosystems, Collection, Challenges, Friends, followed by a Rewards group containing Leaderboard and Badges. On mobile, bottom nav: Explore, Ecosystems, Collection, Challenges, Profile. Keep capture button prominent. Capturing an image must require minimum taps. Use HTTPS and `getUserMedia` where available; fall back to `<input type=file accept=image/* capture=environment>` and explain permission failures. Do not promise camera works offline in every browser. Use IndexedDB offline queue when available, and upload status indicators. Limit compressed image size; keep the original image securely if required for verification.
 
 ### A. Quick discovery
 

@@ -2,24 +2,36 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Binoculars, Camera, Leaf, Medal, Trophy, UserCircle, Users } from '@phosphor-icons/react';
+import {
+  Binoculars,
+  Camera,
+  Leaf,
+  Medal,
+  Target,
+  TreeEvergreen,
+  Trophy,
+  UserCircle,
+  Users,
+} from '@phosphor-icons/react';
 import useSWR from 'swr';
 import { api } from '@/lib/api';
 import type { Profile } from '@/lib/types';
 import { useEffect, type ReactNode } from 'react';
 import { ErrorNote } from '@/components/ui';
 
-const links = [
+const primaryLinks = [
   { href: '/dashboard', label: 'Explore', icon: Binoculars },
+  { href: '/ecosystems', label: 'Ecosystems', icon: TreeEvergreen },
   { href: '/collection', label: 'Collection', icon: Leaf },
-  { href: '/challenges', label: 'Challenges', icon: Medal },
-  { href: '/leaderboard', label: 'Leaderboard', icon: Trophy },
+  { href: '/challenges', label: 'Challenges', icon: Target },
   { href: '/friends', label: 'Friends', icon: Users },
 ];
+const rewardLinks = [
+  { href: '/leaderboard', label: 'Leaderboard', icon: Trophy },
+  { href: '/badges', label: 'Badges', icon: Medal },
+];
 const mobileLinks = [
-  ...links.slice(0, 2),
-  { href: '/ecosystems', label: 'Ecosystems', icon: Leaf },
-  ...links.slice(2, 3),
+  ...primaryLinks.slice(0, 4),
   { href: '/settings', label: 'Profile', icon: UserCircle },
 ];
 
@@ -54,7 +66,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </Link>
         <p className='mt-2 text-xs text-white/65'>Touch grass. Find more outside.</p>
         <nav className='mt-12 grid gap-1'>
-          {links.map(({ href, label, icon: Icon }) => (
+          {primaryLinks.map(({ href, label, icon: Icon }) => (
             <Link
               key={href}
               href={href}
@@ -65,25 +77,23 @@ export function AppShell({ children }: { children: ReactNode }) {
               {label}
             </Link>
           ))}
+          <div className='mt-8 border-t border-white/15 pt-5'>
+            <p className='px-4 text-[11px] font-bold uppercase tracking-[.18em] text-white/50'>
+              Rewards
+            </p>
+            {rewardLinks.map(({ href, label, icon: Icon }) => (
+              <Link
+                key={href}
+                href={href}
+                aria-current={pathname.startsWith(href) ? 'page' : undefined}
+                className={`mt-2 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-colors ${pathname.startsWith(href) ? 'bg-white/16 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white'}`}
+              >
+                <Icon size={21} weight={pathname.startsWith(href) ? 'fill' : 'regular'} />
+                {label}
+              </Link>
+            ))}
+          </div>
         </nav>
-        <div className='mt-8 border-t border-white/15 pt-5'>
-          <p className='px-4 text-[11px] font-bold uppercase tracking-[.18em] text-white/50'>
-            Ecosystem challenges
-          </p>
-          <Link
-            href='/ecosystems'
-            aria-current={pathname.startsWith('/ecosystems') ? 'page' : undefined}
-            className={`mt-2 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold ${pathname.startsWith('/ecosystems') ? 'bg-white/16 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white'}`}
-          >
-            <Leaf size={21} /> Explore ecosystems
-          </Link>
-        </div>
-        <Link
-          href='/badges'
-          className='mt-2 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-white/70 hover:bg-white/10 hover:text-white'
-        >
-          <Medal size={21} /> Badges
-        </Link>
         <Link href='/capture' className='button mt-8 w-full'>
           <Camera size={19} weight='bold' /> Quick capture
         </Link>
