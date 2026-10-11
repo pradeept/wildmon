@@ -11,6 +11,8 @@ import { ShareButton } from '@/components/share-button';
 interface Summary extends Hunt {
   pending: boolean;
   estimated_in_app_focus_seconds: number;
+  focus_xp_awarded: number;
+  focus_reward_processed: boolean;
   discoveries: Discovery[];
   xp_awarded: number;
 }
@@ -18,7 +20,10 @@ interface Summary extends Hunt {
 export default function HuntSummary() {
   const { id } = useParams<{ id: string }>();
   const { data } = useSWR<Summary>(`/hunts/${id}/summary`, api, {
-    refreshInterval: (summary) => (summary?.pending ? 4000 : 0),
+    refreshInterval: (summary) =>
+      summary?.pending || summary?.state === 'finishing' || !summary?.focus_reward_processed
+        ? 4000
+        : 0,
   });
   return (
     <>
@@ -35,7 +40,7 @@ export default function HuntSummary() {
           </Link>
         }
       />
-      <div className='mb-8 grid gap-3 sm:grid-cols-3'>
+      <div className='mb-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4'>
         <div className='surface p-5'>
           <span className='text-sm text-muted'>Discoveries</span>
           <strong className='mt-2 block text-3xl'>{data?.discoveries.length ?? '...'}</strong>
@@ -48,6 +53,12 @@ export default function HuntSummary() {
           <span className='text-sm text-muted'>Estimated in-app focus</span>
           <strong className='mt-2 block text-3xl'>
             {data ? `${Math.floor(data.estimated_in_app_focus_seconds / 60)} min` : '...'}
+          </strong>
+        </div>
+        <div className='surface p-5'>
+          <span className='text-sm text-muted'>Focus bonus</span>
+          <strong className='mt-2 block text-3xl text-accent'>
+            {data?.focus_reward_processed ? `+${data.focus_xp_awarded} XP` : '...'}
           </strong>
         </div>
       </div>

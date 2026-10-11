@@ -16,12 +16,13 @@ Updated 2026-10-11. The [handoff](TOUCH_GRASS_CODEX_HANDOFF.md) remains the prod
 - Secret-safe Atlas/Gemma connectivity probe for running from a normal terminal.
 - Focused AI Studio credential diagnostic separates key, model, text, and image failures without printing the key.
 - VS Code workspace settings select the API uv virtual environment and add the API source root to Pylance import resolution.
+- Timed-hunt focus XP is reconciled by the worker, including a short grace period for visibility signals after the deadline; the hunt summary displays focus bonus XP separately.
 - Isolated walkthrough tooling in `tools/video`: real Chrome captures, deterministic HTML/SVG animation, scene narration, captions, FFmpeg export, and reproduction instructions. It adds no dependencies to the production frontend.
 
 ## Verified here
 
 - pnpm and uv dependencies installed; `pnpm-lock.yaml` and `apps/api/uv.lock` exist. uv's existing cache was copied to `/private/tmp` for an offline sync.
-- Ruff lint and format checks pass. Ten pytest tests pass, including a mocked native Gemma image request and an async XP cursor regression test.
+- Ruff lint and format checks pass. Fifteen pytest tests pass, including native Gemma transport, async XP cursor, and focus reward reconciliation tests.
 - Prettier check, frontend TypeScript check, OpenAPI schema export/type generation, and Next.js production build with webpack pass.
 - Local `.env` loads with Atlas URI, `wildmon` database, Gemma key/model, and a non-default JWT secret. Secret values were not printed.
 - Approved live checks reached the local frontend (HTTP 200), API health (`database: connected`), and AI Studio. A real Gemma image diagnostic returned a candidate in 36.2 seconds. This confirms transport, not species accuracy.
@@ -34,6 +35,7 @@ Updated 2026-10-11. The [handoff](TOUCH_GRASS_CODEX_HANDOFF.md) remains the prod
 
 - Earlier sandbox-only network probes failed before authentication; approved network execution subsequently succeeded. Restricted execution still requires network/browser permission.
 - Earlier short model timeouts and Google HTTP 500 errors were diagnosed separately. The worker has a configurable 120-second model read timeout and a lease sized for two calls. The user now confirms image processing works, and the live collection contains verified results. The 30-image accuracy evaluation remains outstanding.
+- Focus measures paired app-hidden intervals, not device screen state; an unpaired hidden signal cannot earn focus XP. The new worker reconciliation path has unit tests but has not yet been observed in a live timed hunt.
 - Lighthouse, automated mobile-browser regression checks, a full two-account challenge, and measured species activation have not run. The walkthrough uses existing processed discoveries; its challenge synchronization is explicitly labeled as an animated explanation.
 - Render deployment needs a private S3-compatible bucket and its CORS policy. The Blueprint has not been synced or deployed.
 

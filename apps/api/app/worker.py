@@ -15,6 +15,7 @@ from app.core.config import get_settings
 from app.core.rewards import award, issue_badge
 from app.core.serializers import now
 from app.core.storage import load_image
+from app.domain.focus import reconcile_free_hunt
 from app.domain.matching import challenge_result
 from app.domain.packs import refresh_pack
 
@@ -407,6 +408,17 @@ async def expire_free_hunts(db: AsyncDatabase[dict[str, Any]]) -> None:
         {"mode": "free", "state": "active", "deadline_at": {"$lte": now()}},
         {"$set": {"state": "finishing", "ended_at": now()}},
     )
+    unfinished = await db.hunt_sessions.find(
+        {
+            "mode": "free",
+            "$or": [
+                {"state": "finishing"},
+                {"state": "completed", "focus_reward_processed": {"$ne": True}},
+            ],
+        }
+    ).to_list(None)
+    for hunt in unfinished:
+        await reconcile_free_hunt(db, hunt)
 
 
 async def worker_loop() -> None:

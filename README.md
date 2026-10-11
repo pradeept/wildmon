@@ -77,6 +77,8 @@ Run each setup block from the repository root.
 
 Open the website at `http://localhost:3000`; API health is at `http://localhost:8000/api/v1/health`, API docs at `http://localhost:8000/docs`. Browser requests use the website's `/api/v1` proxy, including private image URLs and local-development uploads.
 
+Timed free hunts can award +25, +60, or +100 estimated in-app focus XP after at least one verified discovery. The browser records app-hidden and visible-again events, and the server counts only paired intervals after capture/finish allowances. It cannot prove the phone screen was physically off. The worker completes hunts and reconciles focus XP even when the summary is closed; a visible-again event may arrive up to two minutes after the deadline. Keep the worker running. Quick captures have no focus bonus.
+
 For testing from another device on your LAN, open `http://<computer-ip>:3000` and set `WEB_ORIGIN=http://<computer-ip>:3000` in `apps/api/.env`. Next.js still proxies API requests to `http://127.0.0.1:8000` on the computer, so the phone never needs to reach its own `localhost`. If the computer's LAN IP changes, update `allowedDevOrigins` in `apps/web/next.config.ts` and restart both development servers after changing these settings.
 
 To generate frontend OpenAPI types after dependency installation:

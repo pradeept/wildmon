@@ -33,13 +33,21 @@ export default function HuntPage() {
     return () => clearInterval(timer);
   }, [hunt]);
   useEffect(() => {
-    if (!hunt || hunt.state !== 'active') return;
+    if (!hunt) return;
+    if (hunt.state !== 'active' && Date.now() > new Date(hunt.deadline_at).getTime() + 120000) {
+      return;
+    }
     const visibility = () => {
-      void post(`/hunts/${id}/visibility`, {
-        kind: document.hidden ? 'hidden' : 'visible',
-        client_at: new Date().toISOString(),
+      void api(`/hunts/${id}/visibility`, {
+        method: 'POST',
+        keepalive: true,
+        body: JSON.stringify({
+          kind: document.hidden ? 'hidden' : 'visible',
+          client_at: new Date().toISOString(),
+        }),
       }).catch(() => {});
     };
+    if (!document.hidden) visibility();
     const pagehide = () => {
       const csrf =
         document.cookie
