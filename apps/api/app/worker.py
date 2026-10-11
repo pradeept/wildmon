@@ -10,7 +10,7 @@ from pymongo.asynchronous.database import AsyncDatabase
 from pymongo.errors import DuplicateKeyError
 
 from app.ai.image_prep import prepare_model_image
-from app.ai.vision import GemmaVisionIdentifier
+from app.ai.vision import GemmaVisionIdentifier, VisionResult
 from app.api.challenges import ensure_hunts
 from app.core.config import get_settings
 from app.core.rewards import award, ensure_discovery_xp_index, issue_badge
@@ -21,6 +21,24 @@ from app.domain.matching import challenge_result
 from app.domain.packs import refresh_pack
 
 logger = logging.getLogger("wildmon.worker")
+
+
+def assess_identification(finding: VisionResult, category: str | None) -> tuple[str, str | None]:
+    """Turn model uncertainty into a review state before any reward is considered."""
+    subject = (finding.primary_subject or "").strip()
+    uncertainty = finding.uncertainty.strip()
+    if not subject and not uncertainty:
+        uncertainty = "The model could not identify a clear primary subject."
+    if finding.insufficient_image or finding.unrelated_image:
+        return "unidentified", uncertainty or None
+    usable = bool(
+        subject
+        and category
+        and not finding.multiple_subjects
+        and finding.candidate_rank != "unknown"
+        and not uncertainty
+    )
+    return ("verified" if usable else "needs_review"), uncertainty or None
 
 
 async def award_discovery(db: AsyncDatabase[dict[str, Any]], item: dict[str, Any]) -> int:
@@ -144,17 +162,8 @@ async def process_identification(db: AsyncDatabase[dict[str, Any]], discovery_id
         }
         else None
     )
-    usable = bool(
-        category
-        and not finding.insufficient_image
-        and not finding.multiple_subjects
-        and not finding.unrelated_image
-        and finding.candidate_rank != "unknown"
-        and not finding.uncertainty.strip()
-    )
-    status = "verified" if usable else "needs_review"
-    if finding.insufficient_image or finding.unrelated_image:
-        status = "unidentified"
+    status, uncertainty = assess_identification(finding, category)
+    usable = status == "verified"
     traits = []
     if usable:
         desired = sorted(
@@ -187,7 +196,7 @@ async def process_identification(db: AsyncDatabase[dict[str, Any]], discovery_id
         "category": category,
         "categories": categories,
         "traits": traits,
-        "uncertainty": finding.uncertainty or None,
+        "uncertainty": uncertainty,
         "guidance": ("Try one clear subject in good light." if status != "verified" else None),
         "processed_at": now(),
     }
@@ -231,9 +240,11 @@ async def complete_verified(db: AsyncDatabase[dict[str, Any]], item: dict[str, A
 
 
 async def claim_job(db: AsyncDatabase[dict[str, Any]]) -> dict[str, Any] | None:
-    """Lease long enough for identification and an optional second trait model call."""
+    """Lease both vision steps, each with an optional Backboard fallback call."""
     stamp = now()
-    lease_seconds = 2 * get_settings().gemma_timeout_seconds + 60
+    settings = get_settings()
+    provider_calls = 2 if settings.backboard_key else 1
+    lease_seconds = 2 * provider_calls * settings.gemma_timeout_seconds + 120
     return await db.processing_jobs.find_one_and_update(
         {
             "state": {"$in": ["queued", "retry", "running"]},

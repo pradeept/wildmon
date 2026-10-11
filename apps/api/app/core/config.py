@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     gemma_api_key: str = ""
     gemma_model: str = ""
     gemma_timeout_seconds: float = 120
+    backboard_key: str = ""
 
 
 @lru_cache

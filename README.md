@@ -40,7 +40,7 @@ Run each setup block from the repository root.
    (cd apps/api && uv sync && { test -f .env || cp .env.example .env; })
    ```
 
-   Edit `apps/api/.env` with `MONGODB_URI`, a random `JWT_SECRET`, `GEMMA_BASE_URL`, `GEMMA_API_KEY`, and `GEMMA_MODEL`. Do not commit secrets. Use `STORAGE_MODE=local` for development. For production use a private S3-compatible bucket and fill the `S3_*` settings. `apps/web/.env.local` only needs `API_PROXY_TARGET` when the API is not at `http://localhost:8000`.
+   Edit `apps/api/.env` with `MONGODB_URI`, a random `JWT_SECRET`, `GEMMA_BASE_URL`, `GEMMA_API_KEY`, and `GEMMA_MODEL`. Set `BACKBOARD_KEY` to fall back through Backboard when a Google Gemma call fails. The fallback sends the same prepared image to the same Gemma model through Backboard's vision message API; it may incur Backboard charges. Do not commit secrets. Use `STORAGE_MODE=local` for development. For production use a private S3-compatible bucket and fill the `S3_*` settings. `apps/web/.env.local` only needs `API_PROXY_TARGET` when the API is not at `http://localhost:8000`.
 
    VS Code settings point Pylance at `apps/api/.venv` when the repository root is open, and at `.venv` when `apps/api` is open directly. If VS Code previously cached another interpreter, run **Python: Select Interpreter** and choose `apps/api/.venv/bin/python` (or `.venv/bin/python` from the API folder), then reload the window.
 

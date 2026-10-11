@@ -45,6 +45,8 @@ services:
         value: gemma-4-31b-it
       - key: GEMMA_API_KEY
         sync: false
+      - key: BACKBOARD_KEY
+        sync: false
 
   - type: worker
     name: wildmon-worker
@@ -103,3 +105,8 @@ services:
           name: wildmon-api
           type: web
           envVarKey: GEMMA_API_KEY
+      - key: BACKBOARD_KEY
+        fromService:
+          name: wildmon-api
+          type: web
+          envVarKey: BACKBOARD_KEY
