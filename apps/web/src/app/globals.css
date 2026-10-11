@@ -1,0 +1,187 @@
+@import 'tailwindcss';
+
+:root {
+  color-scheme: light;
+  --page: #f5f8f5;
+  --surface: #ffffff;
+  --surface-alt: #eaf1eb;
+  --ink: #143629;
+  --muted: #52685e;
+  --border: #d8e5d9;
+  --accent: #da5a37;
+  --accent-hover: #bd472a;
+  --accent-ink: #ffffff;
+  --forest: #173c2d;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --page: #12231c;
+    --surface: #1b3025;
+    --surface-alt: #294535;
+    --ink: #f0f8f0;
+    --muted: #acc7b2;
+    --border: #3b5944;
+    --accent: #fa8660;
+    --accent-hover: #ff9a77;
+    --accent-ink: #2b170f;
+    --forest: #0c1b14;
+  }
+}
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --color-page: var(--page);
+  --color-surface: var(--surface);
+  --color-surface-alt: var(--surface-alt);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--border);
+  --color-accent: var(--accent);
+  --color-forest: var(--forest);
+}
+
+* {
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--ink);
+}
+button,
+input,
+select {
+  font: inherit;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+a {
+  text-decoration: none;
+}
+::selection {
+  background: #ffbd9e;
+  color: #173c2d;
+}
+
+.surface {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+.surface-soft {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 44px;
+  padding: 0.7rem 1.1rem;
+  border-radius: 11px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 650;
+  transition:
+    transform 0.18s ease,
+    background 0.18s ease;
+  white-space: nowrap;
+}
+.button:hover {
+  background: var(--accent-hover);
+}
+.button:active {
+  transform: scale(0.98);
+}
+.button-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 44px;
+  padding: 0.7rem 1.1rem;
+  border-radius: 11px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 600;
+  white-space: nowrap;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease;
+}
+.button-secondary:hover {
+  border-color: var(--muted);
+}
+.button-secondary:active {
+  transform: scale(0.98);
+}
+.field {
+  width: 100%;
+  min-height: 46px;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+}
+.field::placeholder {
+  color: var(--muted);
+}
+.field:focus-visible,
+a:focus-visible,
+button:focus-visible,
+select:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+.subtle {
+  color: var(--muted);
+}
+.label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 650;
+  margin-bottom: 0.4rem;
+}
+.status {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 650;
+  text-transform: capitalize;
+}
+.app-width {
+  width: min(100% - 2rem, 1200px);
+  margin-inline: auto;
+}
+.photo-frame {
+  overflow: hidden;
+  border-radius: 16px;
+  background: var(--surface-alt);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

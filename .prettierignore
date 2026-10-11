@@ -1,0 +1,7 @@
+pnpm-lock.yaml
+uv.lock
+.next
+apps/web/next-env.d.ts
+node_modules
+.venv
+TOUCH_GRASS_CODEX_HANDOFF.md

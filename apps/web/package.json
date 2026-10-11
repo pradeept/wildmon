@@ -1,0 +1,30 @@
+{
+  "name": "web",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build --webpack",
+    "start": "next start",
+    "lint": "tsc --noEmit",
+    "typegen": "openapi-typescript src/lib/openapi.json -o src/lib/api-types.ts"
+  },
+  "dependencies": {
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "geist": "latest",
+    "@radix-ui/react-dialog": "latest",
+    "@radix-ui/react-tabs": "latest",
+    "@phosphor-icons/react": "latest",
+    "swr": "latest"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "latest",
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "openapi-typescript": "latest",
+    "tailwindcss": "latest",
+    "typescript": "^5.9.3"
+  }
+}
