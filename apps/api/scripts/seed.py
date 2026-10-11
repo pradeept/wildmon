@@ -123,6 +123,11 @@ async def main() -> None:
     await db.upload_intents.create_index([("expires_at", 1)], expireAfterSeconds=0)
     await db.challenges.create_index([("state", 1), ("deadline_at", 1)])
     await db.xp_transactions.create_index([("user_id", 1), ("created_at", -1)])
+    await db.xp_transactions.create_index(
+        "discovery_source_id",
+        unique=True,
+        partialFilterExpression={"discovery_source_id": {"$type": "string"}},
+    )
     await db.discoveries.create_index([("user_id", 1), ("created_at", -1)])
     for identifier, scientific, common, category in SPECIES:
         await db.species.update_one(

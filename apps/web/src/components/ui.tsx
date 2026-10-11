@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import type { Discovery } from '@/lib/types';
+import { discoveryStatusLabel, discoveryTitle } from '@/lib/discovery-display';
 
 export function PageHeader({
   title,
@@ -63,7 +64,7 @@ export function DiscoveryCard({ item }: { item: Discovery }) {
   return (
     <Link
       href={`/discoveries/${item.id}`}
-      aria-label={`Open discovery: ${item.common_name ?? 'Finding out'}`}
+      aria-label={`Open discovery: ${discoveryTitle(item)}`}
       className='surface group block overflow-hidden transition-transform hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
     >
       {item.image_url ? (
@@ -83,14 +84,12 @@ export function DiscoveryCard({ item }: { item: Discovery }) {
       <div className='p-4'>
         <div className='flex items-start justify-between gap-3'>
           <div>
-            <h3 className='font-semibold'>
-              {item.common_name ?? (item.status === 'verified' ? item.category : 'Finding out...')}
-            </h3>
+            <h3 className='font-semibold'>{discoveryTitle(item)}</h3>
             <p className='mt-1 text-xs text-muted'>
               {item.scientific_name ?? new Date(item.created_at).toLocaleDateString()}
             </p>
           </div>
-          <span className='status'>{item.status.replace('_', ' ')}</span>
+          <span className='status'>{discoveryStatusLabel(item.status)}</span>
         </div>
         {item.uncertainty ? <p className='mt-3 text-sm text-muted'>{item.uncertainty}</p> : null}
         {item.guidance ? <p className='mt-3 text-sm text-muted'>{item.guidance}</p> : null}

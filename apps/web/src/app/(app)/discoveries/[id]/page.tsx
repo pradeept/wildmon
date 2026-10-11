@@ -5,21 +5,27 @@ import Link from 'next/link';
 import useSWR from 'swr';
 import { ArrowLeft, ArrowUpRight } from '@phosphor-icons/react';
 import { api } from '@/lib/api';
+import { discoveryStatusLabel, discoveryTitle } from '@/lib/discovery-display';
 import type { Discovery } from '@/lib/types';
 import { ErrorNote, PageHeader } from '@/components/ui';
+import { RetryDiscoveryButton } from '@/components/retry-discovery-button';
 
 export default function DiscoveryPage() {
   const { id } = useParams<{ id: string }>();
-  const { data: item, error } = useSWR<Discovery>(`/discoveries/${id}`, api, {
+  const {
+    data: item,
+    error,
+    mutate,
+  } = useSWR<Discovery>(`/discoveries/${id}`, api, {
     refreshInterval: (discovery) =>
       discovery && ['queued', 'processing'].includes(discovery.status) ? 3000 : 0,
   });
-  const name = item?.common_name ?? (item?.status === 'verified' ? item.category : 'Finding out…');
+  const name = item ? discoveryTitle(item) : 'Your discovery';
 
   return (
     <>
       <PageHeader
-        title={name ?? 'Your discovery'}
+        title={name}
         description='A closer look at this moment outside.'
         action={
           <Link href='/collection' className='button-secondary'>
@@ -45,7 +51,7 @@ export default function DiscoveryPage() {
             )}
           </div>
           <div className='self-start surface p-6 md:p-8'>
-            <span className='status'>{item.status.replace('_', ' ')}</span>
+            <span className='status'>{discoveryStatusLabel(item.status)}</span>
             <h2 className='mt-5 text-2xl font-semibold tracking-tight'>{name}</h2>
             {item.scientific_name ? (
               <p className='mt-1 text-sm italic text-muted'>{item.scientific_name}</p>
@@ -69,6 +75,15 @@ export default function DiscoveryPage() {
               <p className='mt-5 text-sm text-muted'>
                 Identification is running. This page updates automatically.
               </p>
+            ) : null}
+            {item.status === 'needs_review' && !item.uncertainty ? (
+              <p className='mt-5 text-sm leading-relaxed text-muted'>
+                The photo did not support a confident identification. Try a clearer view of one
+                subject.
+              </p>
+            ) : null}
+            {item.status === 'failed' ? (
+              <RetryDiscoveryButton id={item.id} onRetried={(updated) => void mutate(updated)} />
             ) : null}
             {item.xp_awarded > 0 ? (
               <p className='mt-6 text-lg font-semibold text-accent'>+{item.xp_awarded} XP</p>

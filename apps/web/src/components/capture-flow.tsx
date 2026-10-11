@@ -10,6 +10,7 @@ import { createClientId } from '@/lib/client-id';
 import { prepareImage } from '@/lib/prepare-image';
 import type { Discovery } from '@/lib/types';
 import { DiscoveryCard, ErrorNote, PageHeader } from '@/components/ui';
+import { RetryDiscoveryButton } from '@/components/retry-discovery-button';
 
 type UploadSign = { key: string; upload_url: string; method: 'PUT' };
 
@@ -157,8 +158,19 @@ export function CaptureFlow() {
             <p className='text-sm text-muted'>
               {['queued', 'processing'].includes(result.status)
                 ? 'Identification is running. You can put your phone away and return later.'
-                : 'Your result is ready.'}
+                : result.status === 'failed'
+                  ? 'Identification could not finish. You can retry this photo without uploading it again.'
+                  : result.status === 'needs_review'
+                    ? 'This identification is uncertain. A clearer photo may help.'
+                    : result.status === 'unidentified'
+                      ? 'The photo did not give enough detail to identify the subject.'
+                      : result.status === 'rejected'
+                        ? 'This photo could not be accepted. The card explains why.'
+                        : 'Your result is ready.'}
             </p>
+            {result.status === 'failed' ? (
+              <RetryDiscoveryButton id={result.id} onRetried={setResult} />
+            ) : null}
             {sessionId ? (
               <Link href={`/hunts/${sessionId}`} className='button-secondary'>
                 Return to hunt

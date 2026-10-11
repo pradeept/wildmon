@@ -5,6 +5,7 @@ from uuid import uuid4
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import FileResponse
+from pymongo import ReturnDocument
 from pymongo.asynchronous.database import AsyncDatabase
 from pymongo.errors import DuplicateKeyError
 
@@ -220,6 +221,47 @@ async def get_discovery(discovery_id: str, user: User, db: Db):
     if not item:
         raise HTTPException(404)
     return public_discovery(item, image_url(item))
+
+
+@router.post("/discoveries/{discovery_id}/retry", response_model=Discovery, status_code=202)
+async def retry_discovery(discovery_id: str, user: User, db: Db):
+    """Queue one failed identification again using its existing photo and job.
+
+    The failed-job state is the compare-and-set guard against duplicate requests.
+    The worker may claim the job immediately, so only change a discovery still
+    marked failed and never overwrite an active processing state.
+    """
+    item = await db.discoveries.find_one({"_id": discovery_id, "user_id": user["_id"]})
+    if not item:
+        raise HTTPException(404)
+    if item["status"] != "failed":
+        raise HTTPException(
+            409, detail={"code": "not_failed", "message": "Only failed discoveries can be retried."}
+        )
+    stamp = now()
+    job = await db.processing_jobs.find_one_and_update(
+        {"kind": "identify", "record_id": discovery_id, "state": "failed"},
+        {
+            "$set": {
+                "state": "queued",
+                "attempts": 0,
+                "available_at": stamp,
+                "lease_until": stamp,
+            },
+            "$unset": {"last_error": ""},
+        },
+        return_document=ReturnDocument.AFTER,
+    )
+    if not job:
+        raise HTTPException(
+            409,
+            detail={"code": "retry_unavailable", "message": "This discovery is already queued."},
+        )
+    await db.discoveries.update_one(
+        {"_id": discovery_id, "status": "failed"},
+        {"$set": {"status": "queued", "guidance": None}},
+    )
+    return public_discovery({**item, "status": "queued", "guidance": None}, image_url(item))
 
 
 @router.get("/discoveries/{discovery_id}/image")

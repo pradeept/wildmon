@@ -14,6 +14,7 @@ async def award(
     kind: str,
     source_id: str,
     key: str,
+    discovery_source_id: str | None = None,
 ) -> bool:
     """Insert one immutable XP event; its unique key makes retries safe.
 
@@ -21,18 +22,19 @@ async def award(
     a worker crash cannot leave the visible total out of sync.
     """
     try:
-        await db.xp_transactions.insert_one(
-            {
-                "_id": uuid4().hex,
-                "user_id": user_id,
-                "amount": amount,
-                "kind": kind,
-                "source_id": source_id,
-                "idempotency_key": key,
-                "day": now().date().isoformat(),
-                "created_at": now(),
-            }
-        )
+        event = {
+            "_id": uuid4().hex,
+            "user_id": user_id,
+            "amount": amount,
+            "kind": kind,
+            "source_id": source_id,
+            "idempotency_key": key,
+            "day": now().date().isoformat(),
+            "created_at": now(),
+        }
+        if discovery_source_id:
+            event["discovery_source_id"] = discovery_source_id
+        await db.xp_transactions.insert_one(event)
         return True
     except DuplicateKeyError:
         return False

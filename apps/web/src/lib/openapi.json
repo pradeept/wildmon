@@ -461,6 +461,49 @@
         }
       }
     },
+    "/api/v1/discoveries/{discovery_id}/retry": {
+      "post": {
+        "tags": [
+          "discoveries"
+        ],
+        "summary": "Retry Discovery",
+        "description": "Queue one failed identification again using its existing photo and job.\n\nThe failed-job state is the compare-and-set guard against duplicate requests.\nThe worker may claim the job immediately, so only change a discovery still\nmarked failed and never overwrite an active processing state.",
+        "operationId": "retry_discovery_api_v1_discoveries__discovery_id__retry_post",
+        "parameters": [
+          {
+            "name": "discovery_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Discovery Id"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Discovery"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/discoveries/{discovery_id}/image": {
       "get": {
         "tags": [

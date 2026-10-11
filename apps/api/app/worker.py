@@ -24,34 +24,41 @@ logger = logging.getLogger("wildmon.worker")
 
 
 async def award_discovery(db: AsyncDatabase[dict[str, Any]], item: dict[str, Any]) -> int:
-    """Award a species once, then use two unique daily repeat slots for race-safe caps."""
+    """Award one XP event per discovery, even across concurrent worker claims."""
     user_id, species_id = item["user_id"], item.get("species_id")
-    existing = await db.xp_transactions.find_one({"source_id": item["_id"]})
+    existing = await db.xp_transactions.find_one({"discovery_source_id": item["_id"]})
+    if not existing:
+        existing = await db.xp_transactions.find_one(
+            {
+                "source_id": item["_id"],
+                "kind": {"$in": ["new_species", "repeat", "category_discovery"]},
+            }
+        )
     if existing:
         return existing["amount"]
+
+    async def try_award(amount: int, kind: str, key: str) -> int | None:
+        """Distinguish a full award slot from another worker awarding this photo."""
+        if await award(db, user_id, amount, kind, item["_id"], key, item["_id"]):
+            return amount
+        winner = await db.xp_transactions.find_one({"discovery_source_id": item["_id"]})
+        return winner["amount"] if winner else None
+
     if species_id:
-        if await award(
-            db, user_id, 100, "new_species", item["_id"], f"species:{user_id}:{species_id}"
-        ):
-            return 100
+        first = await try_award(100, "new_species", f"species:{user_id}:{species_id}")
+        if first is not None:
+            return first
         day = now().date().isoformat()
         for slot in range(2):
-            if await award(
-                db,
-                user_id,
-                10,
-                "repeat",
-                item["_id"],
-                f"repeat:{user_id}:{species_id}:{day}:{slot}",
-            ):
-                return 10
+            awarded = await try_award(10, "repeat", f"repeat:{user_id}:{species_id}:{day}:{slot}")
+            if awarded is not None:
+                return awarded
         return 0
     day = now().date().isoformat()
     for slot in range(10):
-        if await award(
-            db, user_id, 10, "category_discovery", item["_id"], f"category:{user_id}:{day}:{slot}"
-        ):
-            return 10
+        awarded = await try_award(10, "category_discovery", f"category:{user_id}:{day}:{slot}")
+        if awarded is not None:
+            return awarded
     return 0
 
 
@@ -437,6 +444,11 @@ async def worker_loop() -> None:
     db = client[settings.mongodb_database]
     try:
         await db.command("ping")
+        await db.xp_transactions.create_index(
+            "discovery_source_id",
+            unique=True,
+            partialFilterExpression={"discovery_source_id": {"$type": "string"}},
+        )
         pending = await db.processing_jobs.count_documents({"state": {"$in": ["queued", "retry"]}})
         logger.info(
             "Wildmon worker connected to database %s; %s jobs pending",
