@@ -1,3 +1,5 @@
+import type { components } from './api-types';
+
 export interface Profile {
   id: string;
   username: string;
@@ -18,6 +20,9 @@ export interface Discovery {
   guidance?: string;
   xp_awarded: number;
   session_id?: string;
+  ecosystem_attempt_id?: string;
+  ecosystem_name?: string;
+  ecosystem_slug?: string;
 }
 
 export interface Hunt {
@@ -59,12 +64,6 @@ export type Requirement =
     }
   | { id: string; kind: 'visual_trait'; trait_code: string; count: number };
 
-export interface Pack {
-  id: string;
-  slug: string;
-  title: string;
-  description: string;
-  version: number;
+export type Pack = Omit<components['schemas']['EcosystemPackView'], 'slots'> & {
   slots: Requirement[];
-  progress?: { state: string; assignments: Record<string, string>; completed_at?: string };
-}
+};

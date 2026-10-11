@@ -62,6 +62,14 @@ export default function DiscoveryPage() {
             {item.category ? (
               <p className='mt-3 text-sm text-muted'>Category: {item.category.replace('_', ' ')}</p>
             ) : null}
+            {item.ecosystem_name && item.ecosystem_slug ? (
+              <Link
+                href={`/ecosystems/${item.ecosystem_slug}`}
+                className='mt-3 inline-block text-sm font-semibold text-accent'
+              >
+                {item.ecosystem_name} <ArrowUpRight size={15} className='inline' />
+              </Link>
+            ) : null}
             {item.uncertainty ? (
               <div className='mt-6 rounded-xl bg-surface-alt p-4'>
                 <h3 className='text-sm font-semibold'>Identification note</h3>

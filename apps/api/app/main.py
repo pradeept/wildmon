@@ -18,6 +18,7 @@ from app.api import (
     species,
 )
 from app.core.config import get_settings
+from app.domain.packs import ensure_ecosystem_indexes
 
 
 @asynccontextmanager
@@ -30,6 +31,7 @@ async def lifespan(app: FastAPI):
         raise RuntimeError("Set JWT_SECRET before production startup")
     client = AsyncMongoClient(settings.mongodb_uri, tz_aware=True)
     app.state.db = client[settings.mongodb_database]
+    await ensure_ecosystem_indexes(app.state.db)
     yield
     await client.close()
 

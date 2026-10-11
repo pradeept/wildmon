@@ -17,7 +17,7 @@ flowchart LR
   Worker --> Gemma[Gemma vision endpoint]
 ```
 
-FastAPI owns authentication, eligibility, matching, XP, challenge timing, pack progress, and leaderboards. Next.js handles the web experience and proxies `/api/v1` to FastAPI so browser cookies stay on one origin. The worker claims durable MongoDB jobs for inference and closes challenges even when browsers are closed. LangChain composes prompt construction and model transport. AI Studio Gemma uses Google's native `generateContent` API; other OpenAI-compatible model hosts use the alternate adapter. Results are validated with Pydantic and resolved against a curated catalog before any exact-species award.
+FastAPI owns authentication, eligibility, matching, XP, challenge timing, timed ecosystem attempts, and leaderboards. Next.js handles the web experience and proxies `/api/v1` to FastAPI so browser cookies stay on one origin. The worker claims durable MongoDB jobs for inference and closes challenges and ecosystems even when browsers are closed. LangChain composes prompt construction and model transport. AI Studio Gemma uses Google's native `generateContent` API; other OpenAI-compatible model hosts use the alternate adapter. Results are validated with Pydantic and resolved against a curated catalog before any exact-species award.
 
 The interface follows the [Geist design system reference](https://vercel.com/geist/introduction) for clear typography, high-contrast surfaces, and disciplined spacing. It uses the Geist font, Tailwind CSS, and Radix primitives with a Wildmon forest and butterfly palette. The official Geist documentation is a design reference here, not an installed Vercel component package.
 
@@ -117,6 +117,6 @@ pnpm --filter web lint
 pnpm --filter web build
 ```
 
-Register two accounts, send and accept a friend request, take a quick capture, start and finish a timed hunt, create a category/trait challenge, join an ecosystem pack, and view both leaderboard scopes. Exact-species challenge targets require the evaluation gate above. Keep the worker running for inference and challenge deadlines.
+Register two accounts, send and accept a friend request, take a quick capture, start and finish a timed hunt, create a category/trait challenge, start a timed ecosystem and submit photos through its dedicated capture, and view both leaderboard scopes. Exact-species challenge targets require the evaluation gate above. Keep the worker running for inference and deadlines.
 
 Wildlife guidance: photograph without touching, feeding, picking, approaching nests, or entering unsafe or private locations. Images are private to the owner in the current API. Public sharing and account deletion are still outstanding.

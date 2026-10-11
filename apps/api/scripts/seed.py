@@ -4,6 +4,7 @@ from pymongo import ASCENDING, DESCENDING, AsyncMongoClient
 
 from app.core.config import get_settings
 from app.core.rewards import ensure_discovery_xp_index
+from app.domain.packs import ensure_ecosystem_indexes
 
 SPECIES = [
     ("azadirachta_indica", "Azadirachta indica", "Neem", "tree"),
@@ -48,12 +49,24 @@ PACKS = [
         "Garden Life",
         "A closer look at living gardens.",
         [
-            ("flowering_plant", 2, 2),
+            ("flowering_plant", 2, 0),
             ("butterfly", 1, 0),
             ("insect", 1, 0),
             ("plant", 1, 0),
             ("tree", 1, 0),
         ],
+    ),
+    (
+        "pollinator-path",
+        "Pollinator Path",
+        "Follow the flowers and the creatures that visit them.",
+        [("flowering_plant", 2, 0), ("butterfly", 1, 0), ("insect", 2, 0)],
+    ),
+    (
+        "birdwatch-trail",
+        "Birdwatch Trail",
+        "Find your local birds and the plants around them.",
+        [("bird", 3, 0), ("tree", 1, 0), ("flowering_plant", 1, 0)],
     ),
 ]
 
@@ -125,6 +138,7 @@ async def main() -> None:
     await db.challenges.create_index([("state", 1), ("deadline_at", 1)])
     await db.xp_transactions.create_index([("user_id", 1), ("created_at", -1)])
     await ensure_discovery_xp_index(db)
+    await ensure_ecosystem_indexes(db)
     await db.discoveries.create_index([("user_id", 1), ("created_at", -1)])
     for identifier, scientific, common, category in SPECIES:
         await db.species.update_one(
@@ -159,7 +173,9 @@ async def main() -> None:
                     "slug": slug,
                     "title": title,
                     "description": description,
-                    "version": 1,
+                    "version": 2
+                    if slug in {"backyard-biodiversity", "urban-wildlife", "garden-life"}
+                    else 1,
                     "slots": slots,
                     "active": True,
                 },

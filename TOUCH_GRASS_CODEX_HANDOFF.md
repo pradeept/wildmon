@@ -1,9 +1,10 @@
 # Touch Grass — Codex Implementation Handoff
 
-**Version:** 1.2 (FastAPI backend architecture)  
-**Date:** 2026-10-09  
+**Version:** 1.3 (timed ecosystem challenges)
+**Date:** 2026-10-12
 **Platform:** Next.js website, Python/FastAPI backend API, model inference adapter. **No native app.**  
 **Goal:** A playable outdoor nature-catching website using open-weight AI, with quick discoveries, timed hunts, friend challenges, ecosystem packs, badges, and friend/global leaderboards.
+**Motto:** Touch grass.
 
 ## 0. Instructions to Codex
 
@@ -14,7 +15,7 @@ Treat this file as the product source of truth. Implement working vertical slice
 1. **Free Hunt:** (a) quick single-photo capture without starting a timer; (b) optional explicit timed sessions with Start/Finish. Both earn discovery XP; only timed sessions qualify for focus bonuses.
 2. **Friend challenges:** creator may use **specific supported species** (e.g. Neem) **or broader supported categories/traits** (e.g. any butterfly, distinct leaf shapes). Challenge requirements are typed and may be mixed in one challenge. The UI must show the required evidence and identification specificity.
 3. **Challenge start:** both players accept and mark **Ready**. The server atomically sets a common `startedAt` and `deadlineAt` once both are ready. No participant can start alone.
-4. **Ecosystem packs:** progress persists across days and sessions. Existing verified collection records may backfill newly joined packs; a single evidence item cannot double-fill two slots in the **same pack** unless pack data explicitly opts in.
+4. **Ecosystem challenges:** a user can start one timed ecosystem at a time, for 1–168 whole hours, and gets one attempt per ecosystem. Only new photos submitted through that attempt count. One photo fills at most one checklist unit. Existing untimed pack progress remains read-only history.
 5. **Backend:** Python **FastAPI** is the single source of truth for authentication, discoveries, game rules, XP, challenges, ecosystem packs, leaderboards, and AI orchestration. Next.js is the website/UI, not an alternate game backend.
 6. **AI:** evaluate a vision-capable **Gemma** model first. Choose the production model based on measured accuracy, latency, cost, and hardware feasibility, not partner points. Keep the inference adapter replaceable.
 7. **Leaderboards:** global and accepted-friends leaderboards, weekly and all-time. Use **eligible, server-awarded XP**, not total photograph count.
@@ -28,7 +29,7 @@ Treat this file as the product source of truth. Implement working vertical slice
 **Quick capture:** One-off discovery, no active hunt or focus bonus.  
 **Timed hunt:** Session starts on server, can contain many discoveries, ends explicitly or on timeout.  
 **Friend challenge:** One creator, one opponent, fixed shared requirements and deadline.  
-**Ecosystem pack:** Persistent checklist of validated observation requirements, completed across any number of days.
+**Ecosystem challenge:** Timed solo checklist with an explicit start, dedicated photo submission, and a fixed result.
 
 **Non-goals:** native apps, chat, endless feed, trading/monetization, complex live GPS tracking, device-wide screen-time tracking, claims of scientific conservation rarity, guaranteed anticheat, and full biodiversity taxonomy coverage.
 
@@ -67,7 +68,7 @@ Creator chooses accepted friend, sets 3–5 requirements (typed as `species`, `t
 
 ### D. Ecosystem pack
 
-Browse three seeded packs, Join -> persistent checklist. Each verified observation, whether from quick captures or hunts, can fill a matching slot based on eligibility and pack version. Old verified collection records may be backfilled on Join. Pack completion awarded once and persists. No timed session required to complete.
+Browse five seeded ecosystems. The user chooses 1–168 whole hours and starts one attempt. The server starts the timer and accepts new photos through that ecosystem's upload entry while active. Those photos appear in Collection with an ecosystem tag and earn ordinary discovery XP. Earlier discoveries and other capture modes never fill this checklist. Finish or the deadline closes admission; accepted pending identification gets at most five minutes to settle. The result is Completed, Partially completed, or Couldn't complete. Each user gets one attempt per ecosystem, including a fresh attempt if they used the earlier untimed pack system. Older pack progress and XP remain read-only history.
 
 ## 5. Challenge requirement and scoring specification
 
@@ -150,7 +151,7 @@ All scoring is computed server-side. Append unique records to `xp_transactions` 
 | Friend challenge participation | +40 | At least one valid target, only once |
 | Friend challenge win | +200 | One winner only; draw gets no win XP |
 | Perfect friend challenge | +100 | Every required target unit matched |
-| Ecosystem pack completion | +300 | Once per user/pack version; version changes must not allow trivial farming |
+| Ecosystem milestone | +50 / +150 / +300 | At least one but less than half / at least half but incomplete / all checklist units; one reward per finalized attempt |
 
 Optional rarity XP +30/+70 only after reliable rarity metadata is introduced; disabled in initial configuration.
 
@@ -162,13 +163,15 @@ Optional rarity XP +30/+70 only after reliable rarity metadata is introduced; di
 
 ## 8. Initial ecosystem definitions
 
-Represent slots as the same typed requirement matcher used in friend challenges, with pack-defined matching rules and optional `distinctSpecies`.
+Represent slots as the same typed requirement matcher used in friend challenges. One verified photo fills at most one unit; species uniqueness is not required for current ecosystems.
 
-- **Backyard Biodiversity:** one flowering plant, one butterfly/moth, one ant/beetle, one bird, one tree.
-- **Urban Wildlife:** one tree, one small bird (curated category rather than arbitrary model inference), one wild-growing plant, one insect, one flowering plant.
-- **Garden Life:** two distinct flowering plant species, one butterfly/moth, one bee/pollinator (use supported taxa/traits), one shrub, one tree.
+- **Backyard Biodiversity:** one flowering plant, one butterfly, one insect, one bird, one tree.
+- **Urban Wildlife:** one tree, one bird, one plant, one insect, one flowering plant.
+- **Garden Life:** two flowering plants, one butterfly, one insect, one plant, one tree.
+- **Pollinator Path:** two flowering plants, one butterfly, two insects.
+- **Birdwatch Trail:** three birds, one tree, one flowering plant.
 
-Seed and validate supported categories before promising every slot can be reliably identified. Persist `packId`, `packVersion`, fulfilled slots, chosen evidence IDs, joined/completed timestamps, and reward ledger link. Backfill on join from eligible verified user records. If one observation would match multiple slots, resolve a deterministic one-to-one assignment maximizing completed slots. Expose provenance and allow user to reassign evidence if a future version supports it.
+Persist an immutable slot snapshot, start/deadline/close/finalize timestamps, fulfilled units, evidence IDs, and idempotent milestone reward. Match only discoveries bound to this attempt. Keep the former `user_pack_progress` collection for read-only history.
 
 ## 9. Database collections and indexes
 
@@ -180,7 +183,8 @@ Seed and validate supported categories before promising every slot can be reliab
 - `challenges` (inviter, invitee, requirements, invite/ready states, shared timing, result version, winner/draw, finalizedAt).
 - `challenge_entries` (challenge/user/discovery unique, eligibility, locked flag, result match).
 - `ecosystem_packs` (slug/version, slots, rewards).
-- `user_pack_progress` (user/pack/version unique, slot assignments and award state).
+- `ecosystem_attempts` (user/pack unique, one active attempt per user, deadline, slot snapshot, result and award state).
+- `user_pack_progress` (read-only legacy pack history).
 - `xp_transactions` (`idempotencyKey` unique, `userId`, `amount`, `type`, source, timestamp).
 - `badges` (code unique), `user_badges` (user/badge unique or version-aware).
 - `processing_jobs` (kind, record ID, lease owner/expiration, retry count, state, last error).
@@ -193,13 +197,13 @@ Use indexes for leaderboard period/scope, friend requests, discovery lookup, pen
 
 **Friends:** `GET /friends`, `POST /friends/requests`, `POST /friends/requests/:id/accept`, `POST /friends/requests/:id/reject`.
 
-**Discovery:** `POST /uploads/sign`, `POST /discoveries` (image key, clientCaptureId, optional sessionId/challengeId), `GET /discoveries/:id`, `GET /discoveries`, `GET /collection`.
+**Discovery:** `POST /uploads/sign`, `POST /discoveries` (image key, clientCaptureId, optional sessionId/challengeId/ecosystemAttemptId), `GET /discoveries/:id`, `GET /discoveries`, `GET /collection`.
 
 **Timed hunts:** `POST /hunts` (duration), `GET /hunts/:id`, `POST /hunts/:id/visibility`, `POST /hunts/:id/finish`, `GET /hunts/:id/summary`.
 
 **Friend challenges:** `POST /challenges`, `GET /challenges`, `GET /challenges/:id`, `POST /challenges/:id/accept`, `POST /challenges/:id/decline`, `POST /challenges/:id/ready`, `POST /challenges/:id/done`, `POST /challenges/:id/captures` (register eligible capture), `GET /challenges/:id/results`. Participant evidence is linked through discovery creation and checked server-side.
 
-**Ecosystems:** `GET /ecosystems`, `GET /ecosystems/:slug`, `POST /ecosystems/:slug/join`, `GET /ecosystems/:slug/progress`.
+**Ecosystems:** `GET /ecosystems`, `GET /ecosystems/:slug`, `POST /ecosystems/:slug/start`, `POST /ecosystems/:slug/finish`, `GET /ecosystems/:slug/results`.
 
 **Other:** `GET /leaderboards?scope=friends|global&period=weekly|all-time`, `GET /badges`, `GET /me/badges`, `GET /health`.
 
@@ -213,7 +217,7 @@ Define Pydantic v2 request/response schemas, FastAPI dependency-based security, 
 
 **Challenge:** `invited -> accepted -> ready_wait -> active -> verifying -> completed`; alternatives `declined`, `cancelled`, `expired` only from allowed states. Both ready before active; both done or deadline before verifying; one terminal final result; cannot edit targets after invitation accepted; only authorized participants see private evidence.
 
-**Ecosystem:** `not_joined -> in_progress -> completed`, persistent across sessions/days; no reset due to a session ending.
+**Ecosystem:** `not_started -> active -> verifying -> completed | partial | missed`. Finish and deadline stop new submissions. Pending photos have a five-minute verification grace; result and bonus are fixed after finalization.
 
 Protect multi-request races with atomic compare-and-set updates, unique keys, and idempotency tokens. Never trust client-submitted XP, validation status, unlocks, or winner.
 
@@ -228,14 +232,14 @@ Protect multi-request races with atomic compare-and-set updates, unique keys, an
 
 ## 13. Tests and acceptance scenarios
 
-Implement automated tests for: first vs repeat XP; daily repeat cap; duplicate upload/idempotent scoring; same image reused in one session; exact-species vs category vs trait matching; distinct-species requirements rejecting genus-only evidence; one-to-one target assignment; both-ready atomic start; concurrent Ready; early Done and late opponent; deadline auto-close without browser; sync-grace limits; delayed/failed inference; win/draw tie-breaks; badge/reward exactly once; pack backfill and cross-day persistence; same observation contributing to challenge and pack without repeated base XP; friends/global visibility; insufficient focus signals not treated as off-screen proof; expired job retry behavior.
+Implement automated tests for: first vs repeat XP; daily repeat cap; duplicate upload/idempotent scoring; same image reused in one session; exact-species vs category vs trait matching; one-to-one target assignment; both-ready atomic start; concurrent Ready; early Done and late opponent; deadline auto-close without browser; sync-grace limits; delayed/failed inference; win/draw tie-breaks; badge/reward exactly once; ecosystem upload isolation, expiry, partial/full milestones, and one attempt per pack; friends/global visibility; insufficient focus signals not treated as off-screen proof; expired job retry behavior.
 
 **Minimum live end-to-end acceptance:**
 1. Register two accounts and become friends.
 2. Perform one quick capture and show a genuine Gemma (or measured replacement) inference with candidate/category/uncertainty.
 3. Start a timed hunt, capture at least two organisms, finish, obtain summary and collection entries.
 4. Create a mixed friend challenge (one exact supported species and one category), invite friend; both accept/ready; capture evidence; each presses Done; server produces consistent winner/draw and awards one-time bonuses/badge.
-5. Join a pack, make partial progress today, finish in a different session, receive a single completion reward.
+5. Start an ecosystem, submit new photos through its upload entry, finish or expire, and receive one milestone reward based on matched checklist units.
 6. Verify both leaderboards reflect server-recorded XP.
 7. Complete one outdoor mobile-browser test and record limitations.
 
@@ -247,7 +251,7 @@ Implement automated tests for: first vs repeat XP; daily repeat cap; duplicate u
 
 **P0-C — Friend Duel:** friends, typed objectives, accept/ready, timed evidence, Done, result worker, winner/tie rules, badges. **Gate:** two browsers complete one challenge end-to-end, even if AI jobs finish after both press Done.
 
-**P0-D — Ecosystem packs:** seed 3 packs, durable cross-day progress, deterministic matching, once-only reward. **Gate:** completion survives refresh/log out.
+**P0-D — Ecosystem challenges:** seed five choices, server-owned timers, dedicated uploads, deterministic matching, once-only milestone reward. **Gate:** expiry and result survive refresh/log out.
 
 **P0-E — Competition:** global/friends leaderboards, sharing, mobile styling, privacy, deploy + actual outdoors demo.
 

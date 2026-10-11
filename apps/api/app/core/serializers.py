@@ -29,4 +29,7 @@ def public_discovery(discovery: dict[str, Any], image_url: str | None = None) ->
         "guidance": discovery.get("guidance"),
         "xp_awarded": discovery.get("xp_awarded", 0),
         "session_id": discovery.get("session_id"),
+        "ecosystem_attempt_id": discovery.get("ecosystem_attempt_id"),
+        "ecosystem_name": discovery.get("ecosystem_name"),
+        "ecosystem_slug": discovery.get("ecosystem_slug"),
     }

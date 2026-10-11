@@ -17,7 +17,9 @@ const links = [
   { href: '/friends', label: 'Friends', icon: Users },
 ];
 const mobileLinks = [
-  ...links.slice(0, 4),
+  ...links.slice(0, 2),
+  { href: '/ecosystems', label: 'Ecosystems', icon: Leaf },
+  ...links.slice(2, 3),
   { href: '/settings', label: 'Profile', icon: UserCircle },
 ];
 
@@ -50,7 +52,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <Link href='/dashboard' className='text-3xl font-black tracking-[-.08em]'>
           wildmon<span className='text-[#ff9370]'>.</span>
         </Link>
-        <p className='mt-2 text-xs text-white/65'>Your outdoor world, collected.</p>
+        <p className='mt-2 text-xs text-white/65'>Touch grass. Find more outside.</p>
         <nav className='mt-12 grid gap-1'>
           {links.map(({ href, label, icon: Icon }) => (
             <Link
@@ -64,6 +66,18 @@ export function AppShell({ children }: { children: ReactNode }) {
             </Link>
           ))}
         </nav>
+        <div className='mt-8 border-t border-white/15 pt-5'>
+          <p className='px-4 text-[11px] font-bold uppercase tracking-[.18em] text-white/50'>
+            Ecosystem challenges
+          </p>
+          <Link
+            href='/ecosystems'
+            aria-current={pathname.startsWith('/ecosystems') ? 'page' : undefined}
+            className={`mt-2 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold ${pathname.startsWith('/ecosystems') ? 'bg-white/16 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white'}`}
+          >
+            <Leaf size={21} /> Explore ecosystems
+          </Link>
+        </div>
         <Link
           href='/badges'
           className='mt-2 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-white/70 hover:bg-white/10 hover:text-white'
@@ -89,7 +103,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             wildmon<span className='text-accent'>.</span>
           </Link>
           <span className='hidden text-sm font-medium text-muted lg:block'>
-            Go outside. Come back with a story.
+            Touch grass. Come back with a story.
           </span>
           <div className='flex items-center gap-3'>
             <span className='status'>+ {me.xp} XP</span>

@@ -93,6 +93,11 @@ export function DiscoveryCard({ item }: { item: Discovery }) {
         </div>
         {item.uncertainty ? <p className='mt-3 text-sm text-muted'>{item.uncertainty}</p> : null}
         {item.guidance ? <p className='mt-3 text-sm text-muted'>{item.guidance}</p> : null}
+        {item.ecosystem_name ? (
+          <span className='mt-3 inline-block rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent'>
+            {item.ecosystem_name}
+          </span>
+        ) : null}
         {item.xp_awarded > 0 ? (
           <p className='mt-3 text-sm font-semibold text-accent'>+{item.xp_awarded} XP</p>
         ) : null}

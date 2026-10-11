@@ -18,7 +18,7 @@ from app.core.serializers import now
 from app.core.storage import load_image
 from app.domain.focus import reconcile_free_hunt
 from app.domain.matching import challenge_result
-from app.domain.packs import refresh_pack
+from app.domain.packs import ensure_ecosystem_indexes, finalize_ecosystems, refresh_attempt
 
 logger = logging.getLogger("wildmon.worker")
 
@@ -98,6 +98,8 @@ async def process_identification(db: AsyncDatabase[dict[str, Any]], discovery_id
         if item.get("session_id")
         else {"challenge_id": item["challenge_id"]}
         if item.get("challenge_id")
+        else {"ecosystem_attempt_id": item["ecosystem_attempt_id"]}
+        if item.get("ecosystem_attempt_id")
         else None
     )
     if scope:
@@ -210,7 +212,7 @@ async def process_identification(db: AsyncDatabase[dict[str, Any]], discovery_id
 
 
 async def complete_verified(db: AsyncDatabase[dict[str, Any]], item: dict[str, Any]) -> None:
-    """Reconcile idempotent rewards and pack progress after a verified state transition."""
+    """Reconcile discovery rewards and only its linked ecosystem attempt."""
     xp = await award_discovery(db, item)
     await db.discoveries.update_one({"_id": item["_id"]}, {"$set": {"xp_awarded": xp}})
     await issue_badge(db, item["user_id"], "first_discovery")
@@ -231,12 +233,8 @@ async def complete_verified(db: AsyncDatabase[dict[str, Any]], item: dict[str, A
             )
             if len(species) >= count:
                 await issue_badge(db, item["user_id"], code)
-    packs = await db.ecosystem_packs.find({"active": True}).to_list(None)
-    joined = await db.user_pack_progress.find({"user_id": item["user_id"]}).to_list(None)
-    joined_keys = {(progress["pack_id"], progress["pack_version"]) for progress in joined}
-    for pack in packs:
-        if (pack["_id"], pack["version"]) in joined_keys:
-            await refresh_pack(db, item["user_id"], pack)
+    if item.get("ecosystem_attempt_id"):
+        await refresh_attempt(db, item["ecosystem_attempt_id"])
 
 
 async def claim_job(db: AsyncDatabase[dict[str, Any]]) -> dict[str, Any] | None:
@@ -456,6 +454,7 @@ async def worker_loop() -> None:
     try:
         await db.command("ping")
         await ensure_discovery_xp_index(db)
+        await ensure_ecosystem_indexes(db)
         pending = await db.processing_jobs.count_documents({"state": {"$in": ["queued", "retry"]}})
         logger.info(
             "Wildmon worker connected to database %s; %s jobs pending",
@@ -466,6 +465,7 @@ async def worker_loop() -> None:
             worked = await run_job(db)
             await expire_free_hunts(db)
             await finalize_challenges(db)
+            await finalize_ecosystems(db)
             if not worked:
                 await asyncio.sleep(2)
     finally:

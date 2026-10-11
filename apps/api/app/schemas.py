@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Annotated, Literal
+from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, EmailStr, Field
 
@@ -41,6 +41,7 @@ class DiscoveryInput(BaseModel):
     client_capture_id: str = Field(min_length=8, max_length=100)
     session_id: str | None = None
     challenge_id: str | None = None
+    ecosystem_attempt_id: str | None = None
 
 
 class Discovery(BaseModel):
@@ -56,6 +57,42 @@ class Discovery(BaseModel):
     guidance: str | None = None
     xp_awarded: int = 0
     session_id: str | None = None
+    ecosystem_attempt_id: str | None = None
+    ecosystem_name: str | None = None
+    ecosystem_slug: str | None = None
+
+
+class EcosystemAttemptView(BaseModel):
+    id: str
+    state: Literal["active", "verifying", "completed", "partial", "missed"]
+    started_at: datetime
+    deadline_at: datetime
+    closed_at: datetime | None = None
+    verification_deadline: datetime | None = None
+    finalized_at: datetime | None = None
+    duration_hours: int
+    assignments: dict[str, str]
+    matched_units: int
+    total_units: int
+    bonus_xp: int
+    end_reason: str | None = None
+
+
+class LegacyPackProgress(BaseModel):
+    state: str
+    assignments: dict[str, str]
+    completed_at: datetime | None = None
+
+
+class EcosystemPackView(BaseModel):
+    id: str
+    slug: str
+    title: str
+    description: str
+    version: int
+    slots: list[dict[str, Any]]
+    attempt: EcosystemAttemptView | None = None
+    legacy_progress: LegacyPackProgress | None = None
 
 
 class HuntInput(BaseModel):

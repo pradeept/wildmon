@@ -12,8 +12,8 @@ export default function Ecosystems() {
   return (
     <>
       <PageHeader
-        title='Ecosystem packs'
-        description='Find the small lives that make a place feel alive. Your progress stays with you across days and hunts.'
+        title='Ecosystem challenges'
+        description='Choose a place to explore, set your time, and add new discoveries to its field checklist.'
       />
       <div className='grid gap-4 md:grid-cols-3'>
         {data?.map((pack, index) => (
@@ -31,11 +31,15 @@ export default function Ecosystems() {
             </div>
             <div className='flex items-center justify-between'>
               <span className='text-sm font-semibold'>
-                {pack.progress?.state === 'completed'
+                {pack.attempt?.state === 'completed'
                   ? 'Completed'
-                  : pack.progress
-                    ? `${Object.keys(pack.progress.assignments).length} of ${pack.slots.reduce((sum, slot) => sum + slot.count, 0)} found`
-                    : 'Join pack'}
+                  : pack.attempt?.state === 'partial'
+                    ? 'Partially completed'
+                    : pack.attempt?.state === 'missed'
+                      ? "Couldn't complete"
+                      : pack.attempt
+                        ? `${pack.attempt.matched_units} of ${pack.attempt.total_units} matched`
+                        : 'Start challenge'}
               </span>
               <ArrowRight size={20} className='transition-transform group-hover:translate-x-1' />
             </div>

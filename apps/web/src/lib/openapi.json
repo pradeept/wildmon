@@ -1280,7 +1280,13 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/EcosystemPackView"
+                  },
+                  "type": "array",
+                  "title": "Response List Packs Api V1 Ecosystems Get"
+                }
               }
             }
           }
@@ -1310,7 +1316,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/EcosystemPackView"
+                }
               }
             }
           },
@@ -1327,13 +1335,13 @@
         }
       }
     },
-    "/api/v1/ecosystems/{slug}/join": {
+    "/api/v1/ecosystems/{slug}/start": {
       "post": {
         "tags": [
           "ecosystems"
         ],
-        "summary": "Join Pack",
-        "operationId": "join_pack_api_v1_ecosystems__slug__join_post",
+        "summary": "Start Pack",
+        "operationId": "start_pack_api_v1_ecosystems__slug__start_post",
         "parameters": [
           {
             "name": "slug",
@@ -1345,12 +1353,24 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartInput"
+              }
+            }
+          }
+        },
         "responses": {
-          "200": {
+          "201": {
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/EcosystemPackView"
+                }
               }
             }
           },
@@ -1367,13 +1387,13 @@
         }
       }
     },
-    "/api/v1/ecosystems/{slug}/progress": {
-      "get": {
+    "/api/v1/ecosystems/{slug}/finish": {
+      "post": {
         "tags": [
           "ecosystems"
         ],
-        "summary": "Pack Progress",
-        "operationId": "pack_progress_api_v1_ecosystems__slug__progress_get",
+        "summary": "Finish Pack",
+        "operationId": "finish_pack_api_v1_ecosystems__slug__finish_post",
         "parameters": [
           {
             "name": "slug",
@@ -1390,7 +1410,51 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/EcosystemPackView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ecosystems/{slug}/results": {
+      "get": {
+        "tags": [
+          "ecosystems"
+        ],
+        "summary": "Pack Results",
+        "operationId": "pack_results_api_v1_ecosystems__slug__results_get",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EcosystemPackView"
+                }
               }
             }
           },
@@ -1755,6 +1819,39 @@
               }
             ],
             "title": "Session Id"
+          },
+          "ecosystem_attempt_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ecosystem Attempt Id"
+          },
+          "ecosystem_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ecosystem Name"
+          },
+          "ecosystem_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ecosystem Slug"
           }
         },
         "type": "object",
@@ -1798,6 +1895,17 @@
               }
             ],
             "title": "Challenge Id"
+          },
+          "ecosystem_attempt_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ecosystem Attempt Id"
           }
         },
         "type": "object",
@@ -1806,6 +1914,180 @@
           "client_capture_id"
         ],
         "title": "DiscoveryInput"
+      },
+      "EcosystemAttemptView": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "active",
+              "verifying",
+              "completed",
+              "partial",
+              "missed"
+            ],
+            "title": "State"
+          },
+          "started_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Started At"
+          },
+          "deadline_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Deadline At"
+          },
+          "closed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Closed At"
+          },
+          "verification_deadline": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verification Deadline"
+          },
+          "finalized_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finalized At"
+          },
+          "duration_hours": {
+            "type": "integer",
+            "title": "Duration Hours"
+          },
+          "assignments": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Assignments"
+          },
+          "matched_units": {
+            "type": "integer",
+            "title": "Matched Units"
+          },
+          "total_units": {
+            "type": "integer",
+            "title": "Total Units"
+          },
+          "bonus_xp": {
+            "type": "integer",
+            "title": "Bonus Xp"
+          },
+          "end_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "state",
+          "started_at",
+          "deadline_at",
+          "duration_hours",
+          "assignments",
+          "matched_units",
+          "total_units",
+          "bonus_xp"
+        ],
+        "title": "EcosystemAttemptView"
+      },
+      "EcosystemPackView": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "version": {
+            "type": "integer",
+            "title": "Version"
+          },
+          "slots": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Slots"
+          },
+          "attempt": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EcosystemAttemptView"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "legacy_progress": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LegacyPackProgress"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "slug",
+          "title",
+          "description",
+          "version",
+          "slots"
+        ],
+        "title": "EcosystemPackView"
       },
       "FocusSignal": {
         "properties": {
@@ -2016,6 +2298,39 @@
         ],
         "title": "HuntView"
       },
+      "LegacyPackProgress": {
+        "properties": {
+          "state": {
+            "type": "string",
+            "title": "State"
+          },
+          "assignments": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Assignments"
+          },
+          "completed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completed At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "state",
+          "assignments"
+        ],
+        "title": "LegacyPackProgress"
+      },
       "LoginInput": {
         "properties": {
           "email": {
@@ -2137,6 +2452,21 @@
           "species_id"
         ],
         "title": "SpeciesRequirement"
+      },
+      "StartInput": {
+        "properties": {
+          "duration_hours": {
+            "type": "integer",
+            "maximum": 168.0,
+            "minimum": 1.0,
+            "title": "Duration Hours"
+          }
+        },
+        "type": "object",
+        "required": [
+          "duration_hours"
+        ],
+        "title": "StartInput"
       },
       "TraitRequirement": {
         "properties": {

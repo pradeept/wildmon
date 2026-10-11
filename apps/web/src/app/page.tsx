@@ -31,12 +31,12 @@ export default function Home() {
             <Leaf size={18} className='text-accent' /> Your world is alive
           </div>
           <h1 className='text-[clamp(3.25rem,6.4vw,6.5rem)] leading-[.98] font-bold tracking-[-.075em] text-forest dark:text-ink'>
-            Step out.
+            Touch grass.
             <br />
             <span className='text-accent'>Look closer.</span>
           </h1>
           <p className='mt-7 max-w-md text-lg leading-relaxed text-muted'>
-            Photograph wildlife, build your collection, and challenge friends to discover more
+            Take a fresh photo, build your wildlife collection, and challenge friends to notice more
             outside.
           </p>
           <div className='mt-9 flex flex-wrap gap-3'>
@@ -79,7 +79,7 @@ export default function Home() {
           {
             icon: Leaf,
             title: 'Grow a collection',
-            copy: 'Verified finds fill your personal collection and persistent ecosystem checklists.',
+            copy: 'Verified finds fill your collection and the timed ecosystems you choose to explore.',
           },
           {
             icon: Trophy,
@@ -98,7 +98,7 @@ export default function Home() {
         ))}
       </section>
       <footer className='app-width flex flex-wrap justify-between gap-3 border-t border-line py-7 text-sm text-muted'>
-        <span>Wildmon. Photograph respectfully and leave wildlife undisturbed.</span>
+        <span>Touch grass. Photograph respectfully and leave wildlife undisturbed.</span>
         <span>Find more outside.</span>
       </footer>
     </main>

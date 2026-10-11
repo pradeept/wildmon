@@ -82,6 +82,13 @@ async def upload_local(key: str, request: Request, user: User, db: Db):
 @router.post("/discoveries", response_model=Discovery, status_code=202)
 async def create_discovery(data: DiscoveryInput, user: User, db: Db):
     stamp = now()
+    if (
+        sum(
+            bool(value) for value in (data.session_id, data.challenge_id, data.ecosystem_attempt_id)
+        )
+        > 1
+    ):
+        raise HTTPException(422, detail="Choose one capture context.")
     existing = await db.discoveries.find_one(
         {"user_id": user["_id"], "client_capture_id": data.client_capture_id}
     )
@@ -153,6 +160,23 @@ async def create_discovery(data: DiscoveryInput, user: User, db: Db):
                     "message": "Competitive capture window closed.",
                 },
             )
+    ecosystem = None
+    if data.ecosystem_attempt_id:
+        ecosystem = await db.ecosystem_attempts.find_one_and_update(
+            {
+                "_id": data.ecosystem_attempt_id,
+                "user_id": user["_id"],
+                "state": "active",
+                "deadline_at": {"$gt": now()},
+            },
+            {"$inc": {"uploads_in_flight": 1}},
+            return_document=ReturnDocument.AFTER,
+        )
+        if not ecosystem:
+            raise HTTPException(
+                409,
+                detail={"code": "ecosystem_closed", "message": "This ecosystem has ended."},
+            )
     item = {
         "_id": uuid4().hex,
         "user_id": user["_id"],
@@ -160,37 +184,49 @@ async def create_discovery(data: DiscoveryInput, user: User, db: Db):
         "client_capture_id": data.client_capture_id,
         "session_id": data.session_id,
         "challenge_id": data.challenge_id,
+        "ecosystem_attempt_id": data.ecosystem_attempt_id,
+        "ecosystem_name": ecosystem["pack_title"] if ecosystem else None,
+        "ecosystem_slug": ecosystem["pack_slug"] if ecosystem else None,
         "status": "queued",
         "created_at": stamp,
     }
     try:
-        await db.discoveries.insert_one(item)
-    except DuplicateKeyError as exc:
-        item = await db.discoveries.find_one(
-            {"user_id": user["_id"], "client_capture_id": data.client_capture_id}
+        try:
+            await db.discoveries.insert_one(item)
+        except DuplicateKeyError as exc:
+            item = await db.discoveries.find_one(
+                {"user_id": user["_id"], "client_capture_id": data.client_capture_id}
+            )
+            if not item:
+                raise HTTPException(
+                    409,
+                    detail={
+                        "code": "image_used",
+                        "message": "This photo has already been submitted.",
+                    },
+                ) from exc
+        await db.processing_jobs.update_one(
+            {"kind": "identify", "record_id": item["_id"]},
+            {
+                "$setOnInsert": {
+                    "_id": uuid4().hex,
+                    "kind": "identify",
+                    "record_id": item["_id"],
+                    "state": "queued",
+                    "attempts": 0,
+                    "available_at": stamp,
+                    "lease_until": stamp,
+                    "created_at": stamp,
+                }
+            },
+            upsert=True,
         )
-        if not item:
-            raise HTTPException(
-                409,
-                detail={"code": "image_used", "message": "This photo has already been submitted."},
-            ) from exc
-    await db.processing_jobs.update_one(
-        {"kind": "identify", "record_id": item["_id"]},
-        {
-            "$setOnInsert": {
-                "_id": uuid4().hex,
-                "kind": "identify",
-                "record_id": item["_id"],
-                "state": "queued",
-                "attempts": 0,
-                "available_at": stamp,
-                "lease_until": stamp,
-                "created_at": stamp,
-            }
-        },
-        upsert=True,
-    )
-    await db.upload_intents.update_one({"_id": data.image_key}, {"$set": {"used": True}})
+        await db.upload_intents.update_one({"_id": data.image_key}, {"$set": {"used": True}})
+    finally:
+        if ecosystem:
+            await db.ecosystem_attempts.update_one(
+                {"_id": ecosystem["_id"]}, {"$inc": {"uploads_in_flight": -1}}
+            )
     return public_discovery(item, image_url(item))
 
 

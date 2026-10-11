@@ -1,12 +1,14 @@
 # Implementation status
 
-Updated 2026-10-11. The [handoff](TOUCH_GRASS_CODEX_HANDOFF.md) remains the product specification.
+Updated 2026-10-12. The [handoff](TOUCH_GRASS_CODEX_HANDOFF.md) remains the product specification.
 
 ## Implemented in source
 
 - Project-local skill at `skills/wildmon/SKILL.md`.
 - pnpm/Next.js App Router frontend with Tailwind, Geist font and design reference, Radix Dialog/Tabs, Prettier config, mobile camera fallback, responsive landing, dashboard, auth, collection, timed hunts, friends, challenges, ecosystems, settings, public profile, and leaderboard.
-- FastAPI API with Pydantic validation, cookie/CSRF auth, PyMongo async access, private local/S3 image storage, idempotent discovery creation, server XP ledger, typed challenge requirements, deterministic one-to-one matching, pack backfill, badges, and leaderboards.
+- FastAPI API with Pydantic validation, cookie/CSRF auth, PyMongo async access, private local/S3 image storage, idempotent discovery creation, server XP ledger, typed challenge requirements, deterministic one-to-one matching, timed ecosystem attempts, badges, and leaderboards.
+- Five timed solo ecosystems: one active timer and one attempt per ecosystem, 1–168 whole-hour duration, dedicated captures, collection tags, deadline or manual finish, five-minute pending inference grace, fixed results, and one milestone award of 0/50/150/300 XP. Earlier untimed pack progress remains read-only history.
+- Capture screens now lead with a camera action in quick discovery, hunts, friend challenges, and ecosystems. Existing-photo upload remains a small underlined discouraged fallback. The landing page and app shell use the motto `Touch grass.`
 - LangChain/Gemma vision adapter with structured output checks and separate visual-trait question. MongoDB leased worker handles inference, retry, challenge deadlines, and results.
 - AI Studio Gemma 4 transport through Google's native image `generateContent` endpoint; OpenAI-compatible hosts remain supported.
 - An optional `BACKBOARD_KEY` sends the same image and prompt to Backboard's `google/<GEMMA_MODEL>` vision route after a failed Google request. The worker lease covers both providers for identification and trait validation.
@@ -25,8 +27,8 @@ Updated 2026-10-11. The [handoff](TOUCH_GRASS_CODEX_HANDOFF.md) remains the prod
 ## Verified here
 
 - pnpm and uv dependencies installed; `pnpm-lock.yaml` and `apps/api/uv.lock` exist. uv's existing cache was copied to `/private/tmp` for an offline sync.
-- Ruff lint and format checks pass. Twenty-eight API tests pass, including native Gemma transport, Backboard fallback image transport, nullable primary-subject review handling, async XP cursor, focus reward reconciliation, large-image/orientation preparation, retry idempotency, concurrent discovery XP protection, and the deployed XP index specification.
-- Prettier check, frontend TypeScript check, OpenAPI schema export/type generation, and Next.js production build with webpack pass.
+- Ruff lint and format checks pass. Thirty-eight API tests pass, including timed ecosystem scoring, duration bounds, evidence isolation, attempt admission rules, pending-photo settlement and once-only milestone XP, native Gemma transport, Backboard fallback image transport, nullable primary-subject review handling, async XP cursor, focus reward reconciliation, large-image/orientation preparation, retry idempotency, concurrent discovery XP protection, and the deployed XP index specification.
+- Prettier check, frontend TypeScript check, OpenAPI schema export/type generation, and Next.js production build with webpack pass for the timed ecosystem changes.
 - Local `.env` loads with Atlas URI, `wildmon` database, Gemma key/model, and a non-default JWT secret. Secret values were not printed.
 - Approved live checks reached the local frontend (HTTP 200), API health (`database: connected`), and AI Studio. A real Gemma image diagnostic returned a candidate in 36.2 seconds. This confirms transport, not species accuracy.
 - Chrome authenticated with the owner's authorized account, read two verified discoveries (papaya and Golden Pothos, 10 XP each), previewed an existing photo, started/finished one short empty hunt, and captured collection, challenge builder, pack checklist, badges, and weekly/all-time leaderboard screens. No photo was resubmitted and no friend invitation was sent.
@@ -45,11 +47,12 @@ Updated 2026-10-11. The [handoff](TOUCH_GRASS_CODEX_HANDOFF.md) remains the prod
 - Focus measures paired app-hidden intervals, not device screen state; an unpaired hidden signal cannot earn focus XP. The new worker reconciliation path has unit tests but has not yet been observed in a live timed hunt.
 - Lighthouse, automated mobile-browser regression checks, a full two-account challenge, and measured species activation have not run. The walkthrough uses existing processed discoveries; its challenge synchronization is explicitly labeled as an animated explanation.
 - Render deployment needs a private S3-compatible bucket and its CORS policy. The Blueprint has not been synced or deployed.
+- The timed ecosystem seed could not reach Atlas from this restricted environment: DNS SRV queries to 8.8.8.8 and 1.1.1.1 returned `Operation not permitted`. Run `cd apps/api && uv run python -m scripts.seed` in a terminal with network access to create the two new packs. Live timed capture and deadline behavior has not yet been exercised against Atlas.
 
 ## Remaining product work
 
 - Confirm index/catalog seed state and continue live integration checks for flows beyond the authenticated walkthrough.
 - Evaluate at least 30 labeled nature/negative photos, enable only measured species, and complete a real two-account mobile-browser demo.
 - Declare response schemas for the remaining FastAPI routes and replace temporary frontend view models with generated OpenAPI types.
-- The three seeded packs use broad categories where the handoff requested narrower ant/beetle, small-bird, wild-growing plant, and pollinator validation. Tighten these only after model/category evaluation; Garden Life already requires two distinct flowering species.
+- The five seeded ecosystems use broad categories until model/category evaluation validates narrower targets. Garden Life currently accepts two distinct photos of flowering plants without requiring distinct species.
 - Complete offline IndexedDB queue, public image sharing, photo/account deletion, deployment, and outdoor test evidence. Focus is a conservative app-visibility estimate; challenge focus tie-break is not used.

@@ -559,7 +559,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/ecosystems/{slug}/join": {
+    "/api/v1/ecosystems/{slug}/start": {
         parameters: {
             query?: never;
             header?: never;
@@ -568,23 +568,40 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Join Pack */
-        post: operations["join_pack_api_v1_ecosystems__slug__join_post"];
+        /** Start Pack */
+        post: operations["start_pack_api_v1_ecosystems__slug__start_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/ecosystems/{slug}/progress": {
+    "/api/v1/ecosystems/{slug}/finish": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Pack Progress */
-        get: operations["pack_progress_api_v1_ecosystems__slug__progress_get"];
+        get?: never;
+        put?: never;
+        /** Finish Pack */
+        post: operations["finish_pack_api_v1_ecosystems__slug__finish_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ecosystems/{slug}/results": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Pack Results */
+        get: operations["pack_results_api_v1_ecosystems__slug__results_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -740,6 +757,12 @@ export interface components {
             xp_awarded: number;
             /** Session Id */
             session_id?: string | null;
+            /** Ecosystem Attempt Id */
+            ecosystem_attempt_id?: string | null;
+            /** Ecosystem Name */
+            ecosystem_name?: string | null;
+            /** Ecosystem Slug */
+            ecosystem_slug?: string | null;
         };
         /** DiscoveryInput */
         DiscoveryInput: {
@@ -751,6 +774,67 @@ export interface components {
             session_id?: string | null;
             /** Challenge Id */
             challenge_id?: string | null;
+            /** Ecosystem Attempt Id */
+            ecosystem_attempt_id?: string | null;
+        };
+        /** EcosystemAttemptView */
+        EcosystemAttemptView: {
+            /** Id */
+            id: string;
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "active" | "verifying" | "completed" | "partial" | "missed";
+            /**
+             * Started At
+             * Format: date-time
+             */
+            started_at: string;
+            /**
+             * Deadline At
+             * Format: date-time
+             */
+            deadline_at: string;
+            /** Closed At */
+            closed_at?: string | null;
+            /** Verification Deadline */
+            verification_deadline?: string | null;
+            /** Finalized At */
+            finalized_at?: string | null;
+            /** Duration Hours */
+            duration_hours: number;
+            /** Assignments */
+            assignments: {
+                [key: string]: string;
+            };
+            /** Matched Units */
+            matched_units: number;
+            /** Total Units */
+            total_units: number;
+            /** Bonus Xp */
+            bonus_xp: number;
+            /** End Reason */
+            end_reason?: string | null;
+        };
+        /** EcosystemPackView */
+        EcosystemPackView: {
+            /** Id */
+            id: string;
+            /** Slug */
+            slug: string;
+            /** Title */
+            title: string;
+            /** Description */
+            description: string;
+            /** Version */
+            version: number;
+            /** Slots */
+            slots: {
+                [key: string]: unknown;
+            }[];
+            attempt?: components["schemas"]["EcosystemAttemptView"] | null;
+            legacy_progress?: components["schemas"]["LegacyPackProgress"] | null;
         };
         /** FocusSignal */
         FocusSignal: {
@@ -839,6 +923,17 @@ export interface components {
             /** Duration Minutes */
             duration_minutes: number;
         };
+        /** LegacyPackProgress */
+        LegacyPackProgress: {
+            /** State */
+            state: string;
+            /** Assignments */
+            assignments: {
+                [key: string]: string;
+            };
+            /** Completed At */
+            completed_at?: string | null;
+        };
         /** LoginInput */
         LoginInput: {
             /**
@@ -900,6 +995,11 @@ export interface components {
              * @constant
              */
             count: 1;
+        };
+        /** StartInput */
+        StartInput: {
+            /** Duration Hours */
+            duration_hours: number;
         };
         /** TraitRequirement */
         TraitRequirement: {
@@ -1985,7 +2085,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["EcosystemPackView"][];
                 };
             };
         };
@@ -2007,7 +2107,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["EcosystemPackView"];
                 };
             };
             /** @description Validation Error */
@@ -2021,7 +2121,42 @@ export interface operations {
             };
         };
     };
-    join_pack_api_v1_ecosystems__slug__join_post: {
+    start_pack_api_v1_ecosystems__slug__start_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StartInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EcosystemPackView"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    finish_pack_api_v1_ecosystems__slug__finish_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -2038,7 +2173,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["EcosystemPackView"];
                 };
             };
             /** @description Validation Error */
@@ -2052,7 +2187,7 @@ export interface operations {
             };
         };
     };
-    pack_progress_api_v1_ecosystems__slug__progress_get: {
+    pack_results_api_v1_ecosystems__slug__results_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -2069,7 +2204,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["EcosystemPackView"];
                 };
             };
             /** @description Validation Error */

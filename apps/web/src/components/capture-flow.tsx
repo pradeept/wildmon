@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import * as Dialog from '@radix-ui/react-dialog';
-import { Camera, ImageSquare, X } from '@phosphor-icons/react';
+import { Camera, X } from '@phosphor-icons/react';
 import { api, post } from '@/lib/api';
 import { createClientId } from '@/lib/client-id';
 import { prepareImage } from '@/lib/prepare-image';
@@ -18,7 +18,10 @@ export function CaptureFlow() {
   const params = useSearchParams();
   const sessionId = params.get('session');
   const challengeId = params.get('challenge');
-  const fileInput = useRef<HTMLInputElement>(null);
+  const ecosystemAttemptId = params.get('ecosystem');
+  const ecosystemSlug = params.get('ecosystem_slug');
+  const cameraInput = useRef<HTMLInputElement>(null);
+  const uploadInput = useRef<HTMLInputElement>(null);
   const video = useRef<HTMLVideoElement>(null);
   const stream = useRef<MediaStream | null>(null);
   const [file, setFile] = useState<File | null>(null);
@@ -52,6 +55,10 @@ export function CaptureFlow() {
 
   async function openCamera() {
     setError('');
+    if (window.matchMedia('(pointer: coarse)').matches || !navigator.mediaDevices?.getUserMedia) {
+      cameraInput.current?.click();
+      return;
+    }
     try {
       const media = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'environment' },
@@ -60,8 +67,18 @@ export function CaptureFlow() {
       stream.current = media;
       setCameraOpen(true);
     } catch {
-      setError('Camera permission was denied or unavailable. Choose a photo instead.');
+      setError('Live camera access is unavailable. Try your device camera.');
+      cameraInput.current?.click();
     }
+  }
+
+  function choosePhoto(event: ChangeEvent<HTMLInputElement>) {
+    const selected = event.currentTarget.files?.[0];
+    if (selected) {
+      setFile(selected);
+      setError('');
+    }
+    event.currentTarget.value = '';
   }
 
   function closeCamera() {
@@ -121,6 +138,7 @@ export function CaptureFlow() {
         client_capture_id: captureId,
         session_id: sessionId,
         challenge_id: challengeId,
+        ecosystem_attempt_id: ecosystemAttemptId,
       });
       setResult(discovery);
       setFile(null);
@@ -134,16 +152,26 @@ export function CaptureFlow() {
   return (
     <>
       <PageHeader
-        title={challengeId ? 'Challenge capture' : sessionId ? 'Hunt capture' : 'Quick capture'}
+        title={
+          ecosystemAttemptId
+            ? 'Ecosystem capture'
+            : challengeId
+              ? 'Challenge capture'
+              : sessionId
+                ? 'Hunt capture'
+                : 'Quick capture'
+        }
         description='Photograph one organism clearly. Keep a safe distance and leave wildlife undisturbed.'
         action={
           <Link
             href={
-              challengeId
-                ? `/challenges/${challengeId}`
-                : sessionId
-                  ? `/hunts/${sessionId}`
-                  : '/dashboard'
+              ecosystemSlug
+                ? `/ecosystems/${ecosystemSlug}`
+                : challengeId
+                  ? `/challenges/${challengeId}`
+                  : sessionId
+                    ? `/hunts/${sessionId}`
+                    : '/dashboard'
             }
             className='button-secondary'
           >
@@ -170,6 +198,11 @@ export function CaptureFlow() {
             </p>
             {result.status === 'failed' ? (
               <RetryDiscoveryButton id={result.id} onRetried={setResult} />
+            ) : null}
+            {ecosystemSlug ? (
+              <Link href={`/ecosystems/${ecosystemSlug}`} className='button-secondary'>
+                Return to ecosystem
+              </Link>
             ) : null}
             {sessionId ? (
               <Link href={`/hunts/${sessionId}`} className='button-secondary'>
@@ -201,15 +234,21 @@ export function CaptureFlow() {
             </div>
             <div className='grid gap-4 p-5 md:p-7'>
               <input
-                ref={fileInput}
+                ref={cameraInput}
                 type='file'
                 accept='image/*'
                 capture='environment'
                 className='sr-only'
-                onChange={(event) => {
-                  setFile(event.target.files?.[0] ?? null);
-                  setError('');
-                }}
+                aria-label='Take a picture with your device camera'
+                onChange={choosePhoto}
+              />
+              <input
+                ref={uploadInput}
+                type='file'
+                accept='image/*'
+                className='sr-only'
+                aria-label='Upload an existing photo'
+                onChange={choosePhoto}
               />
               <ErrorNote message={error} />
               {file ? (
@@ -219,24 +258,29 @@ export function CaptureFlow() {
                   </button>
                   <button
                     className='button-secondary'
+                    disabled={busy}
                     onClick={() => {
-                      setFile(null);
-                      fileInput.current?.click();
+                      void openCamera();
                     }}
                   >
-                    Retake
+                    Retake picture
                   </button>
                 </div>
               ) : (
-                <div className='flex flex-wrap gap-3'>
-                  <button className='button' onClick={() => fileInput.current?.click()}>
-                    <ImageSquare size={19} /> Take or choose photo
-                  </button>
-                  <button className='button-secondary' onClick={openCamera}>
-                    <Camera size={19} /> Live camera
+                <div>
+                  <button className='button' onClick={() => void openCamera()}>
+                    <Camera size={19} /> Take a picture
                   </button>
                 </div>
               )}
+              <button
+                type='button'
+                disabled={busy}
+                onClick={() => uploadInput.current?.click()}
+                className='w-fit min-h-10 text-left text-xs font-medium text-muted underline underline-offset-2 hover:text-ink disabled:opacity-50'
+              >
+                Upload an existing photo (discouraged)
+              </button>
               <p className='text-xs leading-relaxed text-muted'>
                 Use a clear photo of one organism. Identification can be uncertain and may ask for a
                 retake. Avoid nests and unsafe locations.

@@ -14,6 +14,7 @@ export default function Dashboard() {
       items?.some((item) => item.status === 'queued' || item.status === 'processing') ? 5000 : 0,
   });
   const { data: packs } = useSWR<Pack[]>('/ecosystems', api);
+  const activeEcosystem = packs?.find((pack) => pack.attempt?.state === 'active');
   return (
     <>
       <PageHeader
@@ -90,6 +91,21 @@ export default function Dashboard() {
             <h2 className='text-xl font-semibold tracking-tight'>Ecosystems</h2>
             <Leaf size={20} className='text-accent' />
           </div>
+          {activeEcosystem?.attempt ? (
+            <Link
+              href={`/ecosystems/${activeEcosystem.slug}`}
+              className='mb-4 block rounded-2xl bg-forest p-5 text-white transition-transform hover:-translate-y-0.5'
+            >
+              <span className='text-xs font-bold uppercase tracking-[.15em] text-white/65'>
+                Your active ecosystem
+              </span>
+              <h3 className='mt-2 text-xl font-semibold'>{activeEcosystem.title}</h3>
+              <p className='mt-2 text-sm text-white/80'>
+                {activeEcosystem.attempt.matched_units} of {activeEcosystem.attempt.total_units}{' '}
+                matched · ends {new Date(activeEcosystem.attempt.deadline_at).toLocaleString()}
+              </p>
+            </Link>
+          ) : null}
           <div className='surface divide-y divide-line overflow-hidden'>
             {packs?.map((pack) => (
               <Link
@@ -100,11 +116,15 @@ export default function Dashboard() {
                 <div>
                   <h3 className='font-semibold'>{pack.title}</h3>
                   <p className='mt-1 text-xs text-muted'>
-                    {pack.progress?.state === 'completed'
+                    {pack.attempt?.state === 'completed'
                       ? 'Completed'
-                      : pack.progress
-                        ? `${Object.keys(pack.progress.assignments).length} of ${pack.slots.reduce((sum, slot) => sum + slot.count, 0)} found`
-                        : 'Ready to join'}
+                      : pack.attempt?.state === 'partial'
+                        ? 'Partially completed'
+                        : pack.attempt?.state === 'missed'
+                          ? "Couldn't complete"
+                          : pack.attempt
+                            ? `${pack.attempt.matched_units} of ${pack.attempt.total_units} matched`
+                            : 'Ready to start'}
                   </p>
                 </div>
                 <ArrowRight size={18} />
