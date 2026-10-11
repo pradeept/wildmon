@@ -3,6 +3,7 @@ import asyncio
 from pymongo import ASCENDING, DESCENDING, AsyncMongoClient
 
 from app.core.config import get_settings
+from app.core.rewards import ensure_discovery_xp_index
 
 SPECIES = [
     ("azadirachta_indica", "Azadirachta indica", "Neem", "tree"),
@@ -123,11 +124,7 @@ async def main() -> None:
     await db.upload_intents.create_index([("expires_at", 1)], expireAfterSeconds=0)
     await db.challenges.create_index([("state", 1), ("deadline_at", 1)])
     await db.xp_transactions.create_index([("user_id", 1), ("created_at", -1)])
-    await db.xp_transactions.create_index(
-        "discovery_source_id",
-        unique=True,
-        partialFilterExpression={"discovery_source_id": {"$type": "string"}},
-    )
+    await ensure_discovery_xp_index(db)
     await db.discoveries.create_index([("user_id", 1), ("created_at", -1)])
     for identifier, scientific, common, category in SPECIES:
         await db.species.update_one(

@@ -7,7 +7,21 @@ from fastapi import HTTPException
 from pymongo.errors import DuplicateKeyError
 
 from app.api.discoveries import retry_discovery
+from app.core.rewards import ensure_discovery_xp_index
 from app.worker import award_discovery
+
+
+@pytest.mark.asyncio
+async def test_discovery_xp_index_matches_existing_atlas_index():
+    class Transactions:
+        async def create_index(self, keys, **options):
+            assert keys == "discovery_source_id"
+            assert options == {
+                "unique": True,
+                "partialFilterExpression": {"discovery_source_id": {"$exists": True}},
+            }
+
+    await ensure_discovery_xp_index(SimpleNamespace(xp_transactions=Transactions()))
 
 
 @pytest.mark.asyncio

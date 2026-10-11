@@ -24,7 +24,7 @@ Updated 2026-10-11. The [handoff](TOUCH_GRASS_CODEX_HANDOFF.md) remains the prod
 ## Verified here
 
 - pnpm and uv dependencies installed; `pnpm-lock.yaml` and `apps/api/uv.lock` exist. uv's existing cache was copied to `/private/tmp` for an offline sync.
-- Ruff lint and format checks pass. Twenty API tests pass, including native Gemma transport, async XP cursor, focus reward reconciliation, large-image/orientation preparation, retry idempotency, and concurrent discovery XP protection.
+- Ruff lint and format checks pass. Twenty-one API tests pass, including native Gemma transport, async XP cursor, focus reward reconciliation, large-image/orientation preparation, retry idempotency, concurrent discovery XP protection, and the deployed XP index specification.
 - Prettier check, frontend TypeScript check, OpenAPI schema export/type generation, and Next.js production build with webpack pass.
 - Local `.env` loads with Atlas URI, `wildmon` database, Gemma key/model, and a non-default JWT secret. Secret values were not printed.
 - Approved live checks reached the local frontend (HTTP 200), API health (`database: connected`), and AI Studio. A real Gemma image diagnostic returned a candidate in 36.2 seconds. This confirms transport, not species accuracy.
@@ -38,7 +38,7 @@ Updated 2026-10-11. The [handoff](TOUCH_GRASS_CODEX_HANDOFF.md) remains the prod
 - Earlier sandbox-only network probes failed before authentication; approved network execution subsequently succeeded. Restricted execution still requires network/browser permission.
 - Earlier short model timeouts and Google HTTP 500 errors were diagnosed separately. The worker has a configurable 120-second model read timeout and a lease sized for two calls. The user now confirms image processing works, and the live collection contains verified results. The 30-image accuracy evaluation remains outstanding.
 - Google's inline-image documentation gives a 20 MB total request limit; the existing 6 MB upload limit is below it. The new 2 MB compression path reduces payload size but has not been tested with a fresh iPhone HEIC/JPEG capture or tied to the earlier provider HTTP 500 responses.
-- Manual retry and the unique XP index have unit coverage but have not yet been exercised with a live failed Gemma job; the worker creates the index on startup.
+- Manual retry and the unique XP index have unit coverage but have not yet been exercised with a live failed Gemma job. The worker and seed script now request the same `$exists: true` partial index already present in Atlas; the previous `$type: "string"` request conflicted with it and prevented worker startup.
 - Focus measures paired app-hidden intervals, not device screen state; an unpaired hidden signal cannot earn focus XP. The new worker reconciliation path has unit tests but has not yet been observed in a live timed hunt.
 - Lighthouse, automated mobile-browser regression checks, a full two-account challenge, and measured species activation have not run. The walkthrough uses existing processed discoveries; its challenge synchronization is explicitly labeled as an animated explanation.
 - Render deployment needs a private S3-compatible bucket and its CORS policy. The Blueprint has not been synced or deployed.

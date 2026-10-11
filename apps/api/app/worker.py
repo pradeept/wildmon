@@ -13,7 +13,7 @@ from app.ai.image_prep import prepare_model_image
 from app.ai.vision import GemmaVisionIdentifier
 from app.api.challenges import ensure_hunts
 from app.core.config import get_settings
-from app.core.rewards import award, issue_badge
+from app.core.rewards import award, ensure_discovery_xp_index, issue_badge
 from app.core.serializers import now
 from app.core.storage import load_image
 from app.domain.focus import reconcile_free_hunt
@@ -444,11 +444,7 @@ async def worker_loop() -> None:
     db = client[settings.mongodb_database]
     try:
         await db.command("ping")
-        await db.xp_transactions.create_index(
-            "discovery_source_id",
-            unique=True,
-            partialFilterExpression={"discovery_source_id": {"$type": "string"}},
-        )
+        await ensure_discovery_xp_index(db)
         pending = await db.processing_jobs.count_documents({"state": {"$in": ["queued", "retry"]}})
         logger.info(
             "Wildmon worker connected to database %s; %s jobs pending",

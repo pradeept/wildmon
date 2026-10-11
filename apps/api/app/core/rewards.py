@@ -7,6 +7,15 @@ from pymongo.errors import DuplicateKeyError
 from app.core.serializers import now
 
 
+async def ensure_discovery_xp_index(db: AsyncDatabase[dict[str, Any]]) -> None:
+    """Create the deployed partial unique index without changing its filter spec."""
+    await db.xp_transactions.create_index(
+        "discovery_source_id",
+        unique=True,
+        partialFilterExpression={"discovery_source_id": {"$exists": True}},
+    )
+
+
 async def award(
     db: AsyncDatabase[dict[str, Any]],
     user_id: str,
