@@ -1,0 +1,263 @@
+{
+  "duration": 116.61,
+  "fps": 30,
+  "width": 1920,
+  "height": 1080,
+  "tempo": 1,
+  "scenes": [
+    {
+      "id": "intro",
+      "label": "A closer look",
+      "minimum": 8,
+      "text": "Step out. Look closer. Wildmon turns a walk outside into a nature discovery game, one real observation at a time.",
+      "start": 0,
+      "end": 9.930000000000001,
+      "audioDuration": 8.88
+    },
+    {
+      "id": "capture",
+      "label": "Capture → discover",
+      "minimum": 23,
+      "text": "Start with a quick capture. Choose a clear photo of one plant, bird, or insect, then submit it. Identification runs in the background, so you can put your phone away. Here's an earlier, genuinely processed discovery. Verified results join your collection and earn experience points; uncertainty stays visible.",
+      "start": 9.930000000000001,
+      "end": 32.93,
+      "audioDuration": 18.28
+    },
+    {
+      "id": "hunt",
+      "label": "Make time for outside",
+      "minimum": 14,
+      "text": "Want a little more structure? Pick a ten, twenty, or thirty minute hunt. Start the timer, explore, and finish when you're ready. Your summary brings the session's discoveries and rewards together.",
+      "start": 32.93,
+      "end": 46.93,
+      "audioDuration": 11.8
+    },
+    {
+      "id": "challenge",
+      "label": "Explore together",
+      "minimum": 14,
+      "text": "Friend challenges give two explorers the same targets. Choose supported categories or visual traits. Both players must be ready before the server starts one shared clock. Verified evidence decides the result.",
+      "start": 46.93,
+      "end": 60.93,
+      "audioDuration": 12.92
+    },
+    {
+      "id": "ecosystem",
+      "label": "A little more, every day",
+      "minimum": 11,
+      "text": "Ecosystem packs turn discoveries into a lasting checklist. Progress carries across days, and earlier verified observations can count when you join. Each photograph fills one matching slot in a pack.",
+      "start": 60.93,
+      "end": 74.3,
+      "audioDuration": 12.32
+    },
+    {
+      "id": "rewards",
+      "label": "Progress with a purpose",
+      "minimum": 9,
+      "text": "Earn badges, build your collection, and compare server-awarded experience on weekly or all-time leaderboards. The reward is noticing more of the living world.",
+      "start": 74.3,
+      "end": 85.63,
+      "audioDuration": 10.28
+    },
+    {
+      "id": "architecture",
+      "label": "Behind the discovery",
+      "minimum": 19,
+      "text": "Behind the scenes, Next.js connects to a FastAPI backend. MongoDB Atlas stores discoveries and durable processing jobs. A separate Python worker asks Gemma to examine each image. Pydantic validates the response, and server rules award rewards once. Processing continues after you leave the page.",
+      "start": 85.63,
+      "end": 107.08,
+      "audioDuration": 20.4
+    },
+    {
+      "id": "outro",
+      "label": "Find more outside",
+      "minimum": 6,
+      "text": "A quick photo. A shared adventure. A growing connection with nature. Wildmon. Find more outside.",
+      "start": 107.08,
+      "end": 116.61,
+      "audioDuration": 8.48
+    }
+  ],
+  "captions": [
+    {
+      "start": 0.3,
+      "end": 1.1880000000000002,
+      "text": "Step out."
+    },
+    {
+      "start": 1.1880000000000002,
+      "end": 2.076,
+      "text": "Look closer."
+    },
+    {
+      "start": 2.076,
+      "end": 8.736000000000002,
+      "text": "Wildmon turns a walk outside into a nature discovery game, one real observation at a"
+    },
+    {
+      "start": 8.736000000000002,
+      "end": 9.180000000000001,
+      "text": "time."
+    },
+    {
+      "start": 10.230000000000002,
+      "end": 12.134166666666669,
+      "text": "Start with a quick capture."
+    },
+    {
+      "start": 12.134166666666669,
+      "end": 17.085,
+      "text": "Choose a clear photo of one plant, bird, or insect, then submit it."
+    },
+    {
+      "start": 17.085,
+      "end": 21.655000000000005,
+      "text": "Identification runs in the background, so you can put your phone away."
+    },
+    {
+      "start": 21.655000000000005,
+      "end": 23.940000000000005,
+      "text": "Here's an earlier, genuinely processed discovery."
+    },
+    {
+      "start": 23.940000000000005,
+      "end": 28.12916666666667,
+      "text": "Verified results join your collection and earn experience points; uncertainty stays"
+    },
+    {
+      "start": 28.12916666666667,
+      "end": 28.510000000000005,
+      "text": "visible."
+    },
+    {
+      "start": 33.23,
+      "end": 35.13322580645161,
+      "text": "Want a little more structure?"
+    },
+    {
+      "start": 35.13322580645161,
+      "end": 38.17838709677419,
+      "text": "Pick a ten, twenty, or thirty minute hunt."
+    },
+    {
+      "start": 38.17838709677419,
+      "end": 41.604193548387094,
+      "text": "Start the timer, explore, and finish when you're ready."
+    },
+    {
+      "start": 41.604193548387094,
+      "end": 45.03,
+      "text": "Your summary brings the session's discoveries and rewards together."
+    },
+    {
+      "start": 47.23,
+      "end": 50.564193548387095,
+      "text": "Friend challenges give two explorers the same targets."
+    },
+    {
+      "start": 50.564193548387095,
+      "end": 53.06483870967742,
+      "text": "Choose supported categories or visual traits."
+    },
+    {
+      "start": 53.06483870967742,
+      "end": 58.06612903225806,
+      "text": "Both players must be ready before the server starts one shared clock."
+    },
+    {
+      "start": 58.06612903225806,
+      "end": 60.15,
+      "text": "Verified evidence decides the result."
+    },
+    {
+      "start": 61.23,
+      "end": 64.51533333333333,
+      "text": "Ecosystem packs turn discoveries into a lasting checklist."
+    },
+    {
+      "start": 64.51533333333333,
+      "end": 69.44333333333333,
+      "text": "Progress carries across days, and earlier verified observations can count when you"
+    },
+    {
+      "start": 69.44333333333333,
+      "end": 69.854,
+      "text": "join."
+    },
+    {
+      "start": 69.854,
+      "end": 73.55,
+      "text": "Each photograph fills one matching slot in a pack."
+    },
+    {
+      "start": 74.6,
+      "end": 79.51652173913043,
+      "text": "Earn badges, build your collection, and compare server-awarded experience on weekly"
+    },
+    {
+      "start": 79.51652173913043,
+      "end": 80.85739130434781,
+      "text": "or all-time leaderboards."
+    },
+    {
+      "start": 80.85739130434781,
+      "end": 84.88,
+      "text": "The reward is noticing more of the living world."
+    },
+    {
+      "start": 85.92999999999999,
+      "end": 87.78454545454545,
+      "text": "Behind the scenes, Next."
+    },
+    {
+      "start": 87.78454545454545,
+      "end": 90.56636363636363,
+      "text": "js connects to a FastAPI backend."
+    },
+    {
+      "start": 90.56636363636363,
+      "end": 94.27545454545454,
+      "text": "MongoDB Atlas stores discoveries and durable processing jobs."
+    },
+    {
+      "start": 94.27545454545454,
+      "end": 98.91181818181818,
+      "text": "A separate Python worker asks Gemma to examine each image."
+    },
+    {
+      "start": 98.91181818181818,
+      "end": 103.5481818181818,
+      "text": "Pydantic validates the response, and server rules award rewards once."
+    },
+    {
+      "start": 103.5481818181818,
+      "end": 106.79363636363635,
+      "text": "Processing continues after you leave the page."
+    },
+    {
+      "start": 107.38,
+      "end": 109.076,
+      "text": "A quick photo."
+    },
+    {
+      "start": 109.076,
+      "end": 110.77199999999999,
+      "text": "A shared adventure."
+    },
+    {
+      "start": 110.77199999999999,
+      "end": 113.59866666666666,
+      "text": "A growing connection with nature."
+    },
+    {
+      "start": 113.59866666666666,
+      "end": 114.164,
+      "text": "Wildmon."
+    },
+    {
+      "start": 114.164,
+      "end": 115.86,
+      "text": "Find more outside."
+    }
+  ]
+}

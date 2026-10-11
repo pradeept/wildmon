@@ -12,3 +12,9 @@ coverage/
 apps/api/uploads/
 model-evaluation.json
 evaluation/photos/
+tools/video/assets/
+tools/video/audio/
+artifacts/*.mp4
+artifacts/*.zip
+artifacts/preview-*.png
+artifacts/wildmon-contact-sheet.jpg
