@@ -18,7 +18,6 @@
     <a href="https://youtu.be/eyGy4yaowKo">Walkthrough</a> ·
     <a href="https://dev.to/pradeepa_17/wildmon-find-more-outside-493a">Article</a>
   </p>
-  <img src="apps/web/public/wildmon-readme-cover.png" alt="Wildmon landing page: Touch grass. Look closer." width="840" />
 </div>
 
 ## The idea
