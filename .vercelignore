@@ -1,0 +1,6 @@
+# The Vercel project uses apps/web as its Root Directory.
+# Exclude backend code from uploads made from the repository root.
+apps/api/
+tools/
+artifacts/
+skills/

@@ -15,7 +15,7 @@ Updated 2026-10-12. The [handoff](TOUCH_GRASS_CODEX_HANDOFF.md) remains the prod
 - An optional `BACKBOARD_KEY` sends the same image and prompt to Backboard's `google/<GEMMA_MODEL>` vision route after a failed Google request. The worker lease covers both providers for identification and trait validation.
 - Seed/index script and 30-image evaluation harness. Seed species start unsupported until evaluation.
 - Generated botanical hero photo optimized to a 376 KB JPEG.
-- Same-origin Next.js API proxy and a reviewable Render Blueprint for web, API, and worker services.
+- Same-origin Next.js API proxy, a reviewable Render Blueprint for API and worker services, and a root `.vercelignore` for the Vercel web project.
 - Browser-safe capture and challenge IDs using Web Crypto random bytes on LAN HTTP.
 - Secret-safe Atlas/Gemma connectivity probe for running from a normal terminal.
 - Focused AI Studio credential diagnostic separates key, model, text, and image failures without printing the key.
@@ -36,6 +36,9 @@ Updated 2026-10-12. The [handoff](TOUCH_GRASS_CODEX_HANDOFF.md) remains the prod
 - Gemini `gemini-3.8-flash-tts` generated eight narration clips. The live voice catalog confirms Charon is male, en-US, US region, General American accent. Temporary login credentials and the dedicated browser profile were removed after capture.
 - Walkthrough tooling passes Ruff lint/format, Node syntax, and Prettier checks. All eight chapter previews were visually inspected, along with frames from the final MP4 and its ending. The finished walkthrough is 116.61 seconds, 1920×1080, H.264 at 30 fps with 48 kHz AAC narration. A full FFmpeg decode passes; measured narration is -16.34 LUFS with no clipping. Audio composition uses exact PCM sample offsets, and export duration is checked against the timeline.
 - Video deliverables are `artifacts/wildmon-walkthrough.mp4`, `artifacts/wildmon-walkthrough.srt`, `artifacts/wildmon-narration.md`, and `artifacts/wildmon-video-source.zip`. The source archive includes animation/render code, actual captures, font license, narration clips, voice provenance, and reproduction instructions; it excludes credentials and environment files.
+- Revised walkthrough captures the updated timed ecosystem setup, accepted friendship, real invitation/acceptance/readiness states, dedicated friend capture, both leaderboard scopes and periods, and earned/future badges. Two authorized accounts reached an active challenge with identical server start/deadline timestamps and two ready participants. No discovery was resubmitted, ecosystem attempt started, or reward invented for the recording.
+- Revision 2 narration uses catalog-verified male US Charon throughout. Three clips use Gemini 3.8 Flash TTS and six use Flash Lite TTS after provider rate limits; per-clip provenance is saved. Ecosystem milestones and focus eligibility are labeled as illustrations: the recorded ecosystem was not started and the saved hunt had no awarded focus bonus. Temporary login credentials were removed.
+- Revision 2 export is 116.31 seconds, 1920×1080, H.264 at 30 fps with 48 kHz AAC, approximately 10.2 MB. Full FFmpeg decode passes; narration measures -16.75 LUFS and -1.35 dBTP without clipping. Nine chapter previews and extra ecosystem/shared-clock/capture frames were inspected, plus the final MP4 clock and ending. Ruff, Prettier and Node syntax checks pass for the revised tooling. The 59-entry editable source archive passes ZIP integrity checks and excludes environment/login files. Revised deliverables use the `-v2` suffix in `artifacts/`.
 
 ## Remaining validation and limitations
 
@@ -46,8 +49,8 @@ Updated 2026-10-12. The [handoff](TOUCH_GRASS_CODEX_HANDOFF.md) remains the prod
 - Backboard fallback has mocked transport coverage only. The sandbox could not connect to Backboard's live model catalog, so actual key validity, model availability, and image response still need a live worker run.
 - A live Backboard response returned `primary_subject: null`; the vision schema now accepts this abstention and the worker records it as uncertain identification without awarding XP. The log now distinguishes a received fallback response from a validated identification.
 - Focus measures paired app-hidden intervals, not device screen state; an unpaired hidden signal cannot earn focus XP. The new worker reconciliation path has unit tests but has not yet been observed in a live timed hunt.
-- Lighthouse, automated mobile-browser regression checks, a full two-account challenge, and measured species activation have not run. The walkthrough uses existing processed discoveries; its challenge synchronization is explicitly labeled as an animated explanation.
-- Render deployment needs a private S3-compatible bucket and its CORS policy. The Blueprint has not been synced or deployed.
+- Lighthouse, automated mobile-browser regression checks, a full two-account challenge through evidence submission/result settlement, and measured species activation have not run. The original walkthrough uses an animated challenge explanation; revision 2 records real two-account invitation/readiness/shared-start behavior and dedicated capture, without claiming an earned challenge result.
+- Render API/worker and Vercel web deployment need a private S3-compatible bucket and its CORS policy; the guide now includes Cloudflare R2 Standard's free allowance as one option. The revised Blueprint and Vercel setup have not been deployed or smoke-tested.
 - The timed ecosystem seed could not reach Atlas from this restricted environment: DNS SRV queries to 8.8.8.8 and 1.1.1.1 returned `Operation not permitted`. Run `cd apps/api && uv run python -m scripts.seed` in a terminal with network access to create the two new packs. Live timed capture and deadline behavior has not yet been exercised against Atlas.
 
 ## Remaining product work

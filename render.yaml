@@ -1,15 +1,6 @@
-# Review the paid worker and S3 requirements in README.md before syncing this Blueprint.
+# Deploy only the API and its continuously running worker. Deploy apps/web to Vercel.
+# Review the paid worker and S3 requirements in README.md before syncing.
 services:
-  - type: web
-    name: wildmon-web
-    runtime: node
-    plan: free
-    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm build:web
-    startCommand: pnpm --filter web start --port $PORT
-    envVars:
-      - key: API_PROXY_TARGET
-        sync: false
-
   - type: web
     name: wildmon-api
     runtime: python
@@ -19,6 +10,8 @@ services:
     startCommand: .venv/bin/python -m scripts.seed && .venv/bin/uvicorn app.main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /api/v1/health
     envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.11
       - key: MONGODB_URI
         sync: false
       - key: MONGODB_DATABASE
@@ -32,13 +25,13 @@ services:
       - key: S3_BUCKET
         sync: false
       - key: S3_ENDPOINT_URL
-        value: ''
+        sync: false
       - key: S3_ACCESS_KEY_ID
         sync: false
       - key: S3_SECRET_ACCESS_KEY
         sync: false
       - key: S3_REGION
-        value: us-east-1
+        value: auto
       - key: GEMMA_BASE_URL
         value: https://generativelanguage.googleapis.com/v1beta/openai/
       - key: GEMMA_MODEL
@@ -56,6 +49,8 @@ services:
     buildCommand: uv sync --locked --no-dev
     startCommand: .venv/bin/python -m app.worker
     envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.11
       - key: MONGODB_URI
         fromService:
           name: wildmon-api
