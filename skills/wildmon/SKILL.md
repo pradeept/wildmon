@@ -5,7 +5,7 @@ description: Build or maintain Wildmon, the nature discovery web game in this re
 
 # Wildmon
 
-Read `TOUCH_GRASS_CODEX_HANDOFF.md` for product rules and `IMPLEMENTATION_STATUS.md` for actual progress. Resolve conflicts in favor of explicit user instructions.
+Read `README.md` for the product overview and inspect the current code for behavior and limitations. Resolve conflicts in favor of explicit user instructions.
 
 ## Stack and boundaries
 
@@ -20,4 +20,4 @@ Read `TOUCH_GRASS_CODEX_HANDOFF.md` for product rules and `IMPLEMENTATION_STATUS
 - Add Python docstrings to complex functions, classes, and methods, explaining invariants and edge cases. Avoid comments that repeat obvious code.
 - Use typed request/response schemas and explicit MongoDB indexes. Make rewards, worker claims, and challenge transitions idempotent.
 - Use a Prettier config based on the Airbnb style (single quotes, trailing commas, 100-character print width) for frontend files. Use Ruff for Python.
-- Build a runnable vertical slice before expanding the surface area. Record tests and actual limitations in `IMPLEMENTATION_STATUS.md`.
+- Keep tests and user-facing documentation aligned with shipped behavior. Do not claim that unverified inference or product flows have been tested.

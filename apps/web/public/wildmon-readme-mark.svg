@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-labelledby="title">
+  <title id="title">Wildmon leaf mark</title>
+  <rect width="120" height="120" rx="28" fill="#234735"/>
+  <path d="M29 84C27 59 40 36 89 28c2 35-16 61-51 61-3 0-6-2-9-5Z" fill="none" stroke="#F5FAF2" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M35 83c14-17 29-31 52-52" fill="none" stroke="#F5FAF2" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="88" cy="30" r="6" fill="#FF886C"/>
+</svg>
